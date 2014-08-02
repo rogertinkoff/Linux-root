@@ -1,0 +1,1432 @@
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
+
+# If not running interactively, don't do anything
+[ -z "$PS1" ] && return
+
+# don't put duplicate lines in the history. See bash(1) for more options
+# ... or force ignoredups and ignorespace
+HISTCONTROL=ignoredups:ignorespace
+
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=1000
+HISTFILESIZE=2000
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
+   debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+function rog_prompt
+{
+  local COLOR_WHITE="\[\033[1;37m\]"
+  local NO_COLOR="\[\033[0m\]"
+
+# export PS1="\T \u@\h[\!]:\w$NO_COLOR\n> "
+  export PS1="$COLOR_WHITE\T \u@\h[\!]:\w$NO_COLOR\n> "
+# export PS1="$NO_COLOR\T \u@\h[\!]:\w$NO_COLOR\n> "
+}
+
+#rog_prompt
+
+# Regular
+txtblk='\e[0;30m' # Black
+txtred='\e[0;31m' # Red
+txtgrn='\e[0;32m' # Green
+txtylw='\e[0;33m' # Yellow
+txtblu='\e[0;34m' # Blue
+txtpur='\e[0;35m' # Purple
+txtcyn='\e[0;36m' # Cyan
+txtwht='\e[0;37m' # White
+
+# Bold
+bldblk='\e[1;30m' # Black
+bldred='\e[1;31m' # Red
+bldgrn='\e[1;32m' # Green
+bldylw='\e[1;33m' # Yellow
+bldblu='\e[1;34m' # Blue
+bldpur='\e[1;35m' # Purple
+bldcyn='\e[1;36m' # Cyan
+bldwht='\e[1;37m' # White
+bldgry='\e[0;37m' # Gray
+
+# Underline
+unkblk='\e[4;30m' # Black
+undred='\e[4;31m' # Red
+undgrn='\e[4;32m' # Green
+undylw='\e[4;33m' # Yellow
+undblu='\e[4;34m' # Blue
+undpur='\e[4;35m' # Purple
+undcyn='\e[4;36m' # Cyan
+undwht='\e[4;37m' # White
+
+# Background
+bakblk='\e[40m'   # Black
+bakred='\e[41m'   # Red
+bakgrn='\e[42m'   # Green
+bakylw='\e[43m'   # Yellow
+bakblu='\e[44m'   # Blue
+bakpur='\e[45m'   # Purple
+bakcyn='\e[46m'   # Cyan
+bakwht='\e[47m'   # White
+txtrst='\e[0m'    # Text Reset
+
+find_git_branch() {
+   local branch
+   # Based on: http://stackoverflow.com/a/13003854/170413
+   if branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+   then
+      if [[ "$branch" == "HEAD" ]]; then
+         branch='(detached head)'
+      fi
+      GIT_BRANCH=$branch
+      git_branch="($branch)"
+   else
+       GIT_BRANCH=""
+      git_branch=""
+   fi
+}
+
+find_git_dirty() {
+  if [[ -z "$git_branch" ]]
+  then
+    git_dirty=''
+  else
+    # Based on: http://stackoverflow.com/a/2659808/170413
+    local err
+    if err=$(git diff-files --quiet 2>&1)
+    then
+      if git diff-index --quiet --cached HEAD
+      then
+        git_dirty=''
+      else
+        # Can't figure out different colors
+        git_dirty="^"
+      fi
+    elif [ -n "$err" ]
+    then
+      # Some error - most likely that it was run within $GIT_DIR
+      # Resolve repo root instead? `git rev-parse --git-dir` does not work, nor does the 'git root' alias trick
+      git_dirty=""
+    else
+      git_dirty="*"
+    fi
+  fi
+}
+
+PROMPT_COMMAND="find_git_branch; $PROMPT_COMMAND"
+
+# Default Git enabled prompt with dirty state
+#export PS1="$txtwht\u@\h:\w\[$txtcyn\] \$git_branch\[$txtred\]\$git_dirty\[$txtrst\]\n> "
+
+# Another variant:
+#export PS1="\[$bldgrn\]\u@\h\[$bldwht\] \w\[$bldcyn\] \$git_branch\[$txtred\]\$git_dirty\[$txtrst\]\n> "
+#export PS1="\[$bldgrn\]\u@\h\[$bldwht\] \w\[$txtrst\]$bldcyn $git_branch\n$txtrst> "
+export PS1="\[$bldpur\]\u@\h\[$bldblu\] \w\[$txtrst\]$bldpur $git_branch\n$txtrst> "
+
+# Default Git enabled root prompt (for use with "sudo -s")
+export SUDO_PS1="$txtwht\[$bakred\]\u@\h\[$txtrst\] \w\$ "
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+   test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+   alias ls='ls --color=auto'
+   #alias dir='dir --color=auto'
+   #alias vdir='vdir --color=auto'
+
+   alias grep='grep --color=auto'
+   alias fgrep='fgrep --color=auto'
+   alias egrep='egrep --color=auto'
+fi
+
+# some more ls aliases
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias rebash='source ~/.bashrc'
+alias h='history'
+alias hgrep='history | grep'
+
+# Alias definitions.
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+
+if [ -f ~/.bash_aliases ]; then
+   . ~/.bash_aliases
+fi
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+   . /etc/bash_completion
+fi
+
+PATH=$PATH:~/root/bin:/usr/local
+
+function e()
+{
+	emacs &
+}
+
+function b-copy-nlclient()
+{
+	if [ "$BuildRoot" == "" ];
+   then
+		echo "b-etag: no BuildRoot defined"
+		return -1
+   fi
+
+	scp $BuildRoot/results/j49/codesourcery/sourcery-gxx/2010q1-202/development/sw/nestlabs/app/client/nlclient root@10.2.0.160:/nestlabs/sbin
+}
+
+function b-etag()
+{
+   if [ "$BuildRoot" == "" ];
+   then
+	echo "b-etag: no BuildRoot defined"
+	return -1
+   fi
+
+   echo "*** cd to BuildRoot $BuildRoot"
+
+   cd $BuildRoot
+
+   TAGS_FILE=TAGS
+
+   rm -f $TAGS_FILE
+   touch $TAGS_FILE
+
+   TAG_DIRS="\
+   sw/nestlabs/app \
+   sw/nestlabs/include \
+   sw/nestlabs/lib \
+   sw/nestlabs/osm \
+	sw/nestlabs/scpm \
+	sw/nestlabs/zigbee \
+   "
+
+   for i in $TAG_DIRS;
+   do
+	echo "*** Tagging directory $i"
+	find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
+   done
+
+   echo "*** Tagging complete - file is $BuildRoot/$TAGS_FILE"
+}
+
+function w1-goto()
+{
+    #export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
+	export GIT_EDITOR="emacs"
+    export BuildRoot="/home/rtinkoff/dev/weave"
+    cd $BuildRoot
+
+    echo "BuildRoot=$BuildRoot"
+}
+
+function w1-rebuild()
+{
+    if [ "$BuildRoot" == "" ];
+    then
+	    echo "w1-rebuild: no BuildRoot defined"
+	    return -1
+    fi
+
+    cd $BuildRoot && make -f StandAlone.mk clean && make -f StandAlone.mk
+}
+
+function w1-reset()
+{
+	if [ "$BuildRoot" == "" ];
+	then
+		echo "w1-reset: no BuildRoot defined"
+		return -1
+	fi
+
+	cd $BuildRoot/../
+
+	echo "w1-reset: blowing away $BuildRoot/../weave"
+	rm -rf dolomite
+
+	echo "w1-reset: cloning from mac"
+	git clone /mnt/hgfs/NestDev/weave
+	echo "w1-reset: cloning complete"
+
+	w1-goto
+}
+
+function w1-etag()
+{
+    if [ "$BuildRoot" == "" ];
+    then
+	    echo "w1-etag: no BuildRoot defined"
+	    return -1
+    fi
+
+    echo "*** cd to BuildRoot $BuildRoot"
+
+    cd $BuildRoot
+
+    TAGS_FILE=TAGS
+
+    rm -f $TAGS_FILE
+    touch $TAGS_FILE
+
+    TAG_DIRS="\
+      . \
+      /Users/rtinkoff/Desktop/notes \
+      "
+
+    for i in $TAG_DIRS;
+    do
+	    echo "*** Tagging directory $i"
+	    find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
+        find $i -name "*.config" | xargs etags --output=$TAGS_FILE --append
+        find $i -name "*.py" | xargs etags --output=$TAGS_FILE --append
+        find $i -name "messages*" | xargs etags --output=$TAGS_FILE --append
+        find $i -name "nlclient*" | xargs etags --output=$TAGS_FILE --append
+        find $i -name "nlevent*" | xargs etags --output=$TAGS_FILE --append
+        find $i -name "*.txt" | xargs etags --output=$TAGS_FILE --append
+    done
+
+    TAG_FILES="\
+      /Users/rtinkoff/.emacs \
+      /Users/rtinkoff/.bash_profile \
+      "
+
+    for i in $TAG_FILES;
+    do
+	    echo "*** Tagging file $i"
+	    etags --output=$TAGS_FILE --append $i
+    done
+
+    echo "*** Tagging complete - file is $BuildRoot/$TAGS_FILE"
+}
+
+function d1-term()
+{
+	gnome-terminal --tab-with-profile=Default --title=Emacs --tab-with-profile=Default --title=Build --tab-with-profile=Default --title=OpenOCD --tab-with-profile=Default --title=GDB --tab-with-profile=Default --title=Shell
+}
+
+function d1-rsync-source()
+{
+	rsync -u --exclude *.git* --exclude *.depend* --exclude *xcode* --exclude *Xcode* -rav --progress rtinkoff@Gru.local:dev/dolomite ~/dev/dolomite
+#	rsync -u --exclude *.git* --exclude *.depend* --exclude *xcode* --exclude *Xcode* -rav --progress /mnt/hgfs/NestDev/sapphire ~/dev
+#	rsync -u -rav --exclude *.git* /mnt/hgfs/NestDev/sapphire ~/dev
+}
+
+function a1-goto()
+{
+#	export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
+	export GIT_EDITOR="emacs"
+
+	cd ~/dev/dolomite/production
+	. build/scripts/environment/setup.sh
+}
+
+function a1-etag()
+{
+    if [ "$BuildRoot" == "" ];
+    then
+	    echo "a1-etag: no BuildRoot defined"
+	    return -1
+    fi
+
+    echo "*** cd to BuildRoot $BuildRoot"
+
+    cd $BuildRoot
+
+    TAGS_FILE=TAGS
+
+    rm -f $TAGS_FILE
+    touch $TAGS_FILE
+
+    TAG_DIRS="\
+      sw/nestlabs \
+      sw/tps/lwip
+      "
+
+    for i in $TAG_DIRS;
+    do
+	    echo "*** Tagging directory $i"
+	    find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
+        find $i -name "*.config" | xargs etags --output=$TAGS_FILE --append
+        find $i -name "*.py" | xargs etags --output=$TAGS_FILE --append
+        find $i -name "messages*" | xargs etags --output=$TAGS_FILE --append
+        find $i -name "nlclient*" | xargs etags --output=$TAGS_FILE --append
+        find $i -name "nlevent*" | xargs etags --output=$TAGS_FILE --append
+        find $i -name "*.txt" | xargs etags --output=$TAGS_FILE --append
+    done
+
+    TAG_FILES="\
+      /home/rtinkoff/.emacs \
+      /home/rtinkoff/.bashrc \
+      /home/rtinkoff/.gdbinit \
+      "
+
+    for i in $TAG_FILES;
+    do
+	    echo "*** Tagging file $i"
+	    etags --output=$TAGS_FILE --append $i
+    done
+
+    echo "*** Tagging complete - file is $BuildRoot/$TAGS_FILE"
+}
+
+function a1-master()
+{
+    a1-goto
+    git checkout product/a67/master
+}
+
+function a1-build()
+{
+    a1-goto && make amber-development
+}
+
+function a1-rebuild()
+{
+    a1-goto && rm -rf results/ && make clean-amber-development && make amber-development
+}
+
+function a1-copy-image()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "a1-copy-image: no BuildRoot defined"
+		return -1
+	fi
+
+    rm -rfv /mnt/hgfs/rtinkoff/Desktop/builds/*
+
+    cp -v $BuildRoot/results/amber/apple/llvm-armv7m/3.3/development/image/app_stream_image/* /mnt/hgfs/rtinkoff/Desktop/builds
+    cp -v $BuildRoot/results/amber/apple/llvm-armv7m/3.3/development/image/shell_stream_image/* /mnt/hgfs/rtinkoff/Desktop/builds
+}
+
+function a1-install-shell()
+{
+	if [ "$BuildRoot" == "" ];
+	then
+		echo "a1-install-shell: no BuildRoot defined"
+		return -1
+	fi
+
+	cd $BuildRoot/sw/nestlabs/apps/shell
+	make BuildProduct=amber BuildConfig=development Verbose= flash-shell SUDO="sudo -E"
+	cd $BuildRoot
+}
+
+function a1-install-app()
+{
+	if [ "$BuildRoot" == "" ];
+	then
+		echo "a1-install-app: no BuildRoot defined"
+		return -1
+	fi
+
+	cd $BuildRoot/sw/nestlabs/apps/amber
+	make BuildProduct=amber BuildConfig=development Verbose= flash SUDO="sudo -E"
+	cd $BuildRoot
+}
+
+function a1-bt()
+{
+    /usr/local/nestlabs/toolchains/llvm/3.3/armv7m/bin/armv7m-none-eabi-addr2line -a -p -f -C -e results/amber/apple/llvm-armv7m/3.3/development/sw/nestlabs/apps/amber/amber-app.elf > backtrace.txt
+    cat backtrace.txt
+}
+
+function a1-bt-shell()
+{
+    /usr/local/nestlabs/toolchains/llvm/3.3/armv7m/bin/armv7m-none-eabi-addr2line -a -p -f -C -e results/amber/apple/llvm-armv7m/3.3/development/sw/nestlabs/apps/shell/shell.elf  > backtrace.txt
+    cat backtrace.txt
+}
+
+
+function d1-goto()
+{
+#	export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
+	export GIT_EDITOR="emacs"
+
+	cd ~/dev/dolomite/production
+#    cd /mnt/hgfs/CookieBotOS/dolomite/production
+	. build/scripts/environment/setup.sh
+}
+
+function d1-master()
+{
+    d1-goto
+    git checkout master
+}
+
+function d1-wsm()
+{
+    d1-goto
+    git checkout user/rtinkoff/WeaveStateManager
+}
+
+function d1-build()
+{
+    d1-goto && make topaz-development
+}
+
+function d1-rebuild()
+{
+    d1-goto && rm -rf results/topaz/apple/llvm-armv7m/3.3/development && make clean-topaz-development && make topaz-development
+}
+
+function d1-build-release()
+{
+    d1-goto && make topaz-release
+}
+
+function d1-rebuild-release()
+{
+    d1-goto && rm -rf results/topaz/apple/llvm-armv7m/3.3/release && make clean-topaz-release && make topaz-release
+}
+
+function d1-build-part()
+{
+    d1-goto
+    cd $BuildRoot/sw/nestlabs/$1; make BuildProduct=topaz BuildConfig=development
+    cd $BuildRoot
+}
+
+function d1-push()
+{
+    if [ "$GIT_BRANCH" == "" ];
+	then
+		echo "d1-push: no GIT_BRANCH defined"
+		return -1
+	fi
+
+    git push $@ origin $GIT_BRANCH
+}
+
+function d1-pull()
+{
+    if [ "$GIT_BRANCH" == "" ];
+	then
+		echo "d1-pull: no GIT_BRANCH defined"
+		return -1
+	fi
+
+    git pull origin $GIT_BRANCH
+}
+
+function d1-diff()
+{
+    if [ "$BuildRoot" == "" ];
+    then
+	    echo "d1-diff: no BuildRoot defined"
+	    return -1
+    fi
+
+    git difftool --no-prompt $@
+}
+
+function d1-show()
+{
+    if [ "$BuildRoot" == "" ];
+    then
+	    echo "d1-show: no BuildRoot defined"
+	    return -1
+    fi
+
+    if [ "$1" == "" ];
+    then
+	    echo "d1-show: usage 'd1-show <change>'"
+	    return -1
+    fi
+
+    git difftool -y $1^ $1
+}
+
+function d1-show-one-file()
+{
+    if [ "$BuildRoot" == "" ];
+    then
+	    echo "d1-show-one-file: no BuildRoot defined"
+	    return -1
+    fi
+
+    if [ "$1" == "" ];
+    then
+	    echo "d1-show-one-file: usage 'd1-show-one-file <change> <file path relative to $BuildRoot>'"
+	    return -1
+    fi
+
+    if [ "$2" == "" ];
+    then
+	    echo "d1-show-one-file: usage 'd1-show-one-file <change> <file path relative to $BuildRoot>'"
+	    return -1
+    fi
+
+    git difftool -y $1^:$2 $1:$2
+}
+
+function d1-bt()
+{
+    /usr/local/nestlabs/toolchains/llvm/3.1/armv7m/bin/armv7m-none-eabi-addr2line -a -p -f -C -e results/topaz/apple/llvm-armv7m/3.3/development/sw/nestlabs/apps/topaz/topaz-app.elf > backtrace.txt
+    cat backtrace.txt
+}
+
+function d1-bt-shell()
+{
+    /usr/local/nestlabs/toolchains/llvm/3.1/armv7m/bin/armv7m-none-eabi-addr2line -a -p -f -C -e results/topaz/apple/llvm-armv7m/3.3/development/sw/nestlabs/apps/shell/shell.elf  > backtrace.txt
+    cat backtrace.txt
+}
+
+function d1-bt-release()
+{
+    /usr/local/nestlabs/toolchains/llvm/3.1/armv7m/bin/armv7m-none-eabi-addr2line -a -p -f -C -e results/topaz/apple/llvm-armv7m/3.3/release/sw/nestlabs/apps/topaz/topaz-app.elf > backtrace.txt
+    cat backtrace.txt
+}
+
+function d1-copy-image()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "d1-copy-image: no BuildRoot defined"
+		return -1
+	fi
+
+    rm -rfv /mnt/hgfs/rtinkoff/Desktop/builds/*
+
+    cp -v $BuildRoot/results/topaz/apple/llvm-armv7m/3.3/development/image/app_stream_image/*en_US-US.elf /mnt/hgfs/rtinkoff/Desktop/builds
+    cp -v $BuildRoot/results/topaz/apple/llvm-armv7m/3.3/development/image/app_stream_image/*.nlsw /mnt/hgfs/rtinkoff/Desktop/builds
+    cp -v $BuildRoot/results/topaz/apple/llvm-armv7m/3.3/development/image/shell_stream_image/*en_US-US.elf /mnt/hgfs/rtinkoff/Desktop/builds
+    cp -v $BuildRoot/results/topaz/apple/llvm-armv7m/3.3/development/image/shell_stream_image/*.nlsw /mnt/hgfs/rtinkoff/Desktop/builds
+}
+
+function d1-copy-image-release()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "d1-copy-image-release: no BuildRoot defined"
+		return -1
+	fi
+
+    cp -v $BuildRoot/results/topaz/apple/llvm-armv7m/3.3/release/image/app_stream_image/*en_US-US.elf /mnt/hgfs/rtinkoff/Desktop/builds
+    cp -v $BuildRoot/results/topaz/apple/llvm-armv7m/3.3/release/image/app_stream_image/*.nlsw /mnt/hgfs/rtinkoff/Desktop/builds
+    cp -v $BuildRoot/results/topaz/apple/llvm-armv7m/3.3/release/image/shell_stream_image/*en_US-US.elf /mnt/hgfs/rtinkoff/Desktop/builds
+    cp -v $BuildRoot/results/topaz/apple/llvm-armv7m/3.3/release/image/shell_stream_image/*.nlsw /mnt/hgfs/rtinkoff/Desktop/builds
+}
+
+function d1-ttyUSB()
+{
+    sudo chmod a+rw /dev/ttyUSB*
+}
+
+function d1-ll-app()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "d1-ll-app: no BuildRoot defined"
+		return -1
+	fi
+
+    ll $BuildRoot/results/topaz/apple/llvm-armv7m/3.3/development/sw/nestlabs/apps/topaz/topaz-app.bin
+}
+
+function d1-memory-setup()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "d1-show-memory: no BuildRoot defined"
+		return -1
+	fi
+
+    cd $BuildRoot/build/scripts/automation/memory-metrics
+    ./Run.sh $BuildRoot/results/topaz/apple/llvm-armv7m/3.3/development/sw/nestlabs/apps/topaz/topaz-app.map
+    ./server.py /tmp/pid.txt
+}
+
+function d1-memory-show()
+{
+    firefox http://localhost:8081
+}
+
+#function d1-reset()
+#{
+#	if [ "$BuildRoot" == "" ];
+#	then
+#		echo "d1-reset: no BuildRoot defined"
+#		return -1
+#	fi
+#
+#	cd $BuildRoot/../../
+#
+#	echo "d1-reset: blowing away $BuildRoot/../../dolomite"
+#	rm -rf dolomite
+#
+#	echo "d1-reset: cloning from mac"
+#	git clone /mnt/hgfs/NestDev/dolomite
+#	echo "d1-reset: cloning complete"
+#
+#	d1-goto
+#}
+
+function d1-show-changed-files()
+{
+   git diff-tree --no-commit-id --name-only -r $@
+}
+
+function d1-symbol-lookup()
+{
+	if [ "$BuildRoot" == "" ];
+	then
+		echo "d1-symbol-lookup: no BuildRoot defined"
+		return -1
+	fi
+
+	/usr/local/nestlabs/toolchains/llvm/3.1/armv7m/bin/armv7m-none-eabi-objdump -x -d $BuildRoot/results/topaz/apple/llvm-armv7m/3.1/development/sw/nestlabs/apps/shell/shell.elf
+}
+
+function d1-openocd()
+{
+	if [ "$BuildRoot" == "" ];
+	then
+		echo "d1-openocd: no BuildRoot defined"
+		return -1
+	fi
+
+	sudo -E $BuildRoot/build/tools/host/i686-pc-linux-gnu/bin/openocd -f $BuildRoot/debug/openocd/openocd-topaz.cfg
+}
+
+function d1-gdb-app()
+{
+	if [ "$BuildRoot" == "" ];
+	then
+		echo "d1-gdb-app: no BuildRoot defined"
+		return -1
+	fi
+
+	/usr/local/nestlabs/toolchains/llvm/3.3/armv7m/bin/armv7m-none-eabi-gdb $BuildRoot/results/topaz/apple/llvm-armv7m/3.3/development/sw/nestlabs/apps/topaz/topaz-app.elf
+}
+
+function d1-gdb-shell()
+{
+	if [ "$BuildRoot" == "" ];
+	then
+		echo "d1-gdb-shell: no BuildRoot defined"
+		return -1
+	fi
+
+	/usr/local/nestlabs/toolchains/llvm/3.3/armv7m/bin/armv7m-none-eabi-gdb $BuildRoot/results/topaz/apple/llvm-armv7m/3.3/development/sw/nestlabs/apps/shell/shell.elf
+}
+
+function d1-install-shell()
+{
+	if [ "$BuildRoot" == "" ];
+	then
+		echo "d1-install-shell: no BuildRoot defined"
+		return -1
+	fi
+
+	cd $BuildRoot/sw/nestlabs/apps/shell
+#	make BuildProduct=topaz BuildConfig=development
+	make BuildProduct=topaz BuildConfig=development Verbose= flash-shell SUDO="sudo -E"
+	cd $BuildRoot
+}
+
+function d1-install-app()
+{
+	if [ "$BuildRoot" == "" ];
+	then
+		echo "d1-install-app: no BuildRoot defined"
+		return -1
+	fi
+
+	cd $BuildRoot/sw/nestlabs/apps/topaz
+#	make BuildProduct=topaz BuildConfig=development
+	make BuildProduct=topaz BuildConfig=development Verbose= flash SUDO="sudo -E"
+	cd $BuildRoot
+}
+
+function d1-install-shell-release()
+{
+	if [ "$BuildRoot" == "" ];
+	then
+		echo "d1-install-shell-release: no BuildRoot defined"
+		return -1
+	fi
+
+	cd $BuildRoot/sw/nestlabs/apps/shell
+#	make BuildProduct=topaz BuildConfig=development
+	make BuildProduct=topaz BuildConfig=release Verbose= flash-shell SUDO="sudo -E"
+	cd $BuildRoot
+}
+
+function d1-install-app-release()
+{
+	if [ "$BuildRoot" == "" ];
+	then
+		echo "d1-install-app-release: no BuildRoot defined"
+		return -1
+	fi
+
+	cd $BuildRoot/sw/nestlabs/apps/topaz
+#	make BuildProduct=topaz BuildConfig=development
+	make BuildProduct=topaz BuildConfig=release Verbose= flash SUDO="sudo -E"
+	cd $BuildRoot
+}
+
+function d1-etag()
+{
+    if [ "$BuildRoot" == "" ];
+    then
+	    echo "d1-etag: no BuildRoot defined"
+	    return -1
+    fi
+
+    echo "*** cd to BuildRoot $BuildRoot"
+
+    cd $BuildRoot
+
+    TAGS_FILE=TAGS
+
+    rm -f $TAGS_FILE
+    touch $TAGS_FILE
+
+    TAG_DIRS="\
+      sw/nestlabs \
+      sw/tps/lwip
+      "
+
+    for i in $TAG_DIRS;
+    do
+	    echo "*** Tagging directory $i"
+	    find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
+	    find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
+        find $i -name "*.config" | xargs etags --output=$TAGS_FILE --append
+        find $i -name "*.py" | xargs etags --output=$TAGS_FILE --append
+        find $i -name "messages*" | xargs etags --output=$TAGS_FILE --append
+        find $i -name "nlclient*" | xargs etags --output=$TAGS_FILE --append
+        find $i -name "nlevent*" | xargs etags --output=$TAGS_FILE --append
+        find $i -name "*.txt" | xargs etags --output=$TAGS_FILE --append
+    done
+
+    TAG_FILES="\
+      /home/rtinkoff/.emacs \
+      /home/rtinkoff/.bashrc \
+      /home/rtinkoff/.gdbinit \
+      "
+
+    for i in $TAG_FILES;
+    do
+	    echo "*** Tagging file $i"
+	    etags --output=$TAGS_FILE --append $i
+    done
+
+    echo "*** Tagging complete - file is $BuildRoot/$TAGS_FILE"
+}
+
+function s1-goto()
+{
+	export GIT_EXTERNAL_DIFF="xxdiff"
+    export GIT_EDITOR="emacs"
+
+#   cd /mnt/hgfs/CookieBotOS/sapphire/production
+      cd ~/dev/sapphire/production
+   . build/scripts/environment/setup.sh
+#    export BuildProduct=j49
+#    export BuildConfig=development
+#    cd sw/nestlabs/app
+}
+
+function s1-etag()
+{
+   if [ "$BuildRoot" == "" ];
+   then
+	echo "s1-etag: no BuildRoot defined"
+	return -1
+   fi
+
+   echo "*** cd to BuildRoot $BuildRoot"
+
+   cd $BuildRoot
+
+   TAGS_FILE=TAGS
+
+   rm -f $TAGS_FILE
+   touch $TAGS_FILE
+
+   TAG_DIRS="\
+   sw/nestlabs/app \
+   sw/nestlabs/include \
+   sw/nestlabs/lib \
+   sw/nestlabs/osm \
+   sw/nestlabs/scpm \
+   sw/nestlabs/zigbee \
+   sw/nestlabs/weave \
+   sw/tps/opencflite/opencflite-476.17.2 \
+   "
+
+   for i in $TAG_DIRS;
+   do
+	echo "*** Tagging directory $i"
+	find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
+   done
+
+   echo "*** Tagging complete - file is $BuildRoot/$TAGS_FILE"
+}
+
+function s1-master()
+{
+    s1-goto && git checkout master
+}
+
+function s1-build()
+{
+    s1-goto && make j49-development
+}
+
+function s1-build-nl-image()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "s1-build-nl-image: no BuildRoot defined"
+		return
+	fi
+
+    cd $BuildRoot/sw/nestlabs && make BuildConfig=development BuildProduct=j49 &&
+    cd $BuildRoot/sw/init && make BuildConfig=development BuildProduct=j49 &&
+    cd $BuildRoot/sw/setup && make BuildConfig=development BuildProduct=j49 &&
+    cd $BuildRoot/sw/users && make BuildConfig=development BuildProduct=j49 &&
+    cd $BuildRoot/fw && make BuildConfig=development BuildProduct=j49 &&
+    cd $BuildRoot/fs && make BuildConfig=development BuildProduct=j49 &&
+    cd $BuildRoot/image && make BuildConfig=development BuildProduct=j49 &&
+    cd $BuildRoot
+}
+
+function s1-rebuild()
+{
+    s1-goto && rm -rf results/j49 && make clean-j49-development && make j49-development
+}
+
+function s1-strip-client()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "s1-install-client: no BuildRoot defined"
+		return
+	fi
+
+    /usr/local/CodeSourcery/Sourcery_G++_Lite/2010q1-202/bin/arm-none-linux-gnueabi-strip $BuildRoot/results/j49/codesourcery/sourcery-gxx/2010q1-202/development/sw/nestlabs/app/client/nlclient
+}
+
+function s1-gdb-client()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "s1-gdb-client: no BuildRoot defined"
+		return
+	fi
+
+    cd $BuildRoot
+    /usr/local/CodeSourcery/Sourcery_G++_Lite/2010q1-202/bin/arm-none-linux-gnueabi-gdb results/j49/codesourcery/sourcery-gxx/2010q1-202/development/sw/nestlabs/app/client/nlclient
+}
+
+function s1-install-client()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "s1-install-client: no BuildRoot defined"
+		return
+	fi
+
+    if [ "$1" == "" ];
+	then
+		echo "Usage: s1-install-client [Diamond IP addr]"
+		return
+	fi
+
+    cd $BuildRoot/sw/nestlabs/app/client/
+    make BuildConfig=development BuildProduct=j49 quick-install DeviceAddress=$1
+    cd $BuildRoot/
+}
+
+function s1-install-bashrc()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "s1-install-bashrc: no BuildRoot defined"
+		return
+	fi
+
+    if [ "$1" == "" ];
+	then
+		echo "Usage: s1-install-bashrc [Diamond IP addr]"
+		return
+	fi
+
+    cd $BuildRoot/sw/nestlabs/app/client/
+    make BuildConfig=development BuildProduct=j49 DeviceAddress=$1 BashrcFile=~/diamond_bashrc quick-install-bashrc
+    cd $BuildRoot/
+}
+
+function s1-install-client-config()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "s1-install-client-config: no BuildRoot defined"
+		return
+	fi
+
+    if [ "$1" == "" ];
+	then
+		echo "Usage: s1-install-client-config [Diamond IP addr]"
+		return
+	fi
+
+    cd $BuildRoot/sw/nestlabs/app/client/
+    make BuildConfig=development BuildProduct=j49 DeviceAddress=$1 ClientConfigFile=/mnt/hgfs/rtinkoff/diamond_client_config quick-install-config
+    cd $BuildRoot/
+}
+
+function s1-install-all()
+{
+    s1-install-bashrc $1 && s1-install-client-config $1
+}
+
+function s1-install-wpan-tunnel-driver()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "s1-install-wpan-tunnel-driver: no BuildRoot defined"
+		return
+	fi
+
+    if [ "$1" == "" ];
+	then
+		echo "Usage: s1-install-wpan-tunnel-driver [Diamond IP addr]"
+		return
+	fi
+
+    cd $BuildRoot/sw/nestlabs/wpan-tunnel-driver/
+    make BuildConfig=development BuildProduct=j49 DeviceAddress=$1 quick-install
+    cd $BuildRoot/
+}
+
+function s1-install-connman()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "s1-install-connman: no BuildRoot defined"
+		return
+	fi
+
+    if [ "$1" == "" ];
+	then
+		echo "Usage: s1-install-connman [Diamond IP addr]"
+		return
+	fi
+
+    cd $BuildRoot/sw/tps/connman/
+    make BuildConfig=development BuildProduct=j49 DeviceAddress=$1 quick-install
+    cd $BuildRoot/
+}
+
+function s1-rsync-source()
+{
+	rsync -u --exclude *.git* --exclude *.depend* --exclude *xcode* --exclude *Xcode* -rav --progress rtinkoff@GreenBuggy.local:sapphire-s1/ ~/dev/sapphire
+#	rsync -u --exclude *.git* --exclude *.depend* --exclude *xcode* --exclude *Xcode* -rav --progress /mnt/hgfs/NestDev/sapphire ~/dev
+#	rsync -u -rav --exclude *.git* /mnt/hgfs/NestDev/sapphire ~/dev
+}
+
+function s1-rsync-results()
+{
+	rsync -urav $BuildRoot/results/j49/codesourcery/sourcery-gxx/2010q1-202/development/image/client_stream_image/ rtinkoff@tuco.local:Desktop/sapphire-s1-results/
+#	rsync -u --exclude *.git* --exclude *.depend* --exclude *xcode* --exclude *Xcode* -rav --progress /mnt/hgfs/NestDev/sapphire ~/dev
+#	rsync -u -rav --exclude *.git* /mnt/hgfs/NestDev/sapphire ~/dev
+}
+
+function s1-gdh-replace()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "s1-gdh-replace: no BuildRoot defined"
+		return
+	fi
+
+    if [ "$1" == "" ];
+    then
+	    echo "s1-gdh-replace: usage 's1-gdh-replace <suffix> <prefix> <tag> <inputfile> <outputfile>'"
+	    return -1
+    fi
+
+    if [ "$2" == "" ];
+    then
+	    echo "s1-gdh-replace: usage 's1-gdh-replace <suffix> <prefix> <tag> <inputfile> <outputfile>'"
+	    return -1
+    fi
+
+    if [ "$3" == "" ];
+    then
+	    echo "s1-gdh-replace: usage 's1-gdh-replace <suffix> <prefix> <tag> <inputfile> <outputfile>'"
+	    return -1
+    fi
+
+    if [ "$4" == "" ];
+    then
+	    echo "s1-gdh-replace: usage 's1-gdh-replace <suffix> <prefix> <tag> <inputfile> <outputfile>'"
+	    return -1
+    fi
+
+    if [ "$5" == "" ];
+    then
+	    echo "s1-gdh-replace: usage 's1-gdh-replace <suffix> <prefix> <tag> <inputfile> <outputfile>'"
+	    return -1
+    fi
+
+    sed -e 's/_XXX_FUNC_SUFFIX/_'"$1"'/g' \
+        -e 's/XXX_DEBUG_OUTPUT_PREFIX/'"$2"'/g' \
+        -e 's/XXX_PREPROCESSOR_TAG/'"$3"'/g' \
+    < $4 > $5
+}
+
+function s1-gdh()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "s1-gdh: no BuildRoot defined"
+		return
+	fi
+
+    s1-gdh-replace DD DEVICE_DESCRIPTION_SERVER NL_DEVICE_DESCRIPTION_SERVER $BuildRoot/sw/nestlabs/app/weave/src/nldebugoutputtempate.h $BuildRoot/sw/nestlabs/app/weave/src/nldevicedescriptionserverdebug.h
+    s1-gdh-replace FP FABRIC_PROVISIONING_SERVER NL_FABRIC_PROVISIONING_SERVER $BuildRoot/sw/nestlabs/app/weave/src/nldebugoutputtempate.h $BuildRoot/sw/nestlabs/app/weave/src/nlfabricprovisioningserverdebug.h
+    s1-gdh-replace NP NETWORK_PROVISIONING_SERVER NL_NETWORK_PROVISIONING_SERVER $BuildRoot/sw/nestlabs/app/weave/src/nldebugoutputtempate.h $BuildRoot/sw/nestlabs/app/weave/src/nlnetworkprovisioningserverdebug.h
+    s1-gdh-replace SME STATE_MACHINE_EXTRAS NL_STATE_MACHINE_EXTRAS $BuildRoot/sw/nestlabs/app/weave/src/nldebugoutputtempate.h $BuildRoot/sw/nestlabs/app/weave/src/nlstatemachineextrasdebug.h
+    s1-gdh-replace WPS WEAVE_PROVISIONING_STATES NL_WEAVE_PROVISIONING_STATES $BuildRoot/sw/nestlabs/app/weave/src/nldebugoutputtempate.h $BuildRoot/sw/nestlabs/app/weave/src/nlweaveprovisioningstatesdebug.h
+    s1-gdh-replace WU WEAVE_UTILITIES NL_WEAVE_UTILITIES $BuildRoot/sw/nestlabs/app/weave/src/nldebugoutputtempate.h $BuildRoot/sw/nestlabs/app/weave/src/nlweaveutilitiesdebug.h  
+}
+
+function s1-generate-debug-headers()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "s1-generate-debug-headers: no BuildRoot defined"
+		return
+	fi
+
+    rm -f ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nldevicedescriptionserverdebug.h
+    touch ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nldevicedescriptionserverdebug.h
+    ~/dev/tools/DebugHeaderGenerator/DebugHeaderGenerator --output-file ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nldevicedescriptionserverdebug.h --debug-prefix DEVICE_DESCRIPTION_SERVER --function-suffix DD
+
+    rm -f ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlfabricprovisioningserverdebug.h
+    touch ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlfabricprovisioningserverdebug.h
+    ~/dev/tools/DebugHeaderGenerator/DebugHeaderGenerator --output-file ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlfabricprovisioningserverdebug.h --debug-prefix FABRIC_PROVISIONING_SERVER --function-suffix FP
+
+    rm -f ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlnetworkprovisioningserverdebug.h
+    touch ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlnetworkprovisioningserverdebug.h
+    ~/dev/tools/DebugHeaderGenerator/DebugHeaderGenerator --output-file ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlnetworkprovisioningserverdebug.h --debug-prefix NETWORK_PROVISIONING_SERVER --function-suffix NP
+
+    rm -f ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlstatemachineextrasdebug.h
+    touch ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlstatemachineextrasdebug.h
+    ~/dev/tools/DebugHeaderGenerator/DebugHeaderGenerator --output-file ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlstatemachineextrasdebug.h --debug-prefix STATE_MACHINE_EXTRAS --function-suffix SME
+
+    rm -f ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlweaveprovisioningstatesdebug.h
+    touch ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlweaveprovisioningstatesdebug.h
+    ~/dev/tools/DebugHeaderGenerator/DebugHeaderGenerator --output-file ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlweaveprovisioningstatesdebug.h --debug-prefix WEAVE_PROVISIONING_STATES --function-suffix WPS
+
+    rm -f ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlweaveutilitiesdebug.h
+    touch ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlweaveutilitiesdebug.h
+    ~/dev/tools/DebugHeaderGenerator/DebugHeaderGenerator --output-file ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlweaveutilitiesdebug.h --debug-prefix WEAVE_UTILITIES --function-suffix WU
+}
+
+function s2-goto()
+{
+	export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
+	export GIT_EDITOR="emacs"
+
+	cd ~/dev/sapphire2/production
+	. build/scripts/environment/setup.sh
+#    export BuildProduct=j49
+#    export BuildConfig=development
+#    cd sw/nestlabs/app
+}
+
+function s2-rsync-source()
+{
+	rsync -u --exclude *.git* --exclude *.depend* --exclude *xcode* --exclude *Xcode* -rav --progress rtinkoff@GreenBuggy.local:sapphire-s2/ ~/dev/sapphire2
+#	rsync -u --exclude *.git* --exclude *.depend* --exclude *xcode* --exclude *Xcode* -rav --progress /mnt/hgfs/NestDev/sapphire ~/dev
+#	rsync -u -rav --exclude *.git* /mnt/hgfs/NestDev/sapphire ~/dev
+}
+
+function t1-goto()
+{
+    mkdir -p ~/dev/tools
+    cd ~/dev/tools
+}
+
+function copy-j49-image()
+{
+   cp -v results/j49/codesourcery/sourcery-gxx/2010q1-202/development/image/client_stream_image/*.tgz /mnt/hgfs/NestDev/
+}
+
+function j49-client-copy()
+{
+	if [ "$1" != "" ];
+   then
+		scp $BuildRoot/results/j49/codesourcery/sourcery-gxx/2010q1-202/development/sw/nestlabs/app/client/nlclient root@"$1":/nestlabs/sbin
+		return;
+   fi
+
+	echo "j49-client-copy: no IP address specified"
+}
+
+function j49-client-copy-debug()
+{
+	if [ "$1" != "" ];
+	then
+		scp $BuildRoot/results/j49/codesourcery/sourcery-gxx/2010q1-202/debug/sw/nestlabs/app/client/nlclient engineering@"$1":/users/engineering
+		return;
+	fi
+
+	echo "j49-client-copy-debug: no IP address specified"
+}
+
+function j49-client-config-copy()
+{
+	if [ "$1" != "" ];
+   then
+		scp $BuildRoot/sw/nestlabs/app/setup/client.config root@$1:/etc/nestlabs
+		return;
+   fi
+
+	echo "j49-client-copy: no IP address specified"
+}
+
+function j49-client-copy-locales()
+{
+	if [ "$1" != "" ];
+   then
+		scp $BuildRoot/sw/nestlabs/app/client/assets/en_US.lproj/Localizable.strings root@"$1":/nestlabs/share/client/locales/en_US.lproj/
+		scp $BuildRoot/sw/nestlabs/app/client/assets/es_US.lproj/Localizable.strings root@"$1":/nestlabs/share/client/locales/es_US.lproj/
+		scp $BuildRoot/sw/nestlabs/app/client/assets/fr_CA.lproj/Localizable.strings root@"$1":/nestlabs/share/client/locales/fr_CA.lproj/
+		return;
+   fi
+
+	echo "j49-client-copy-locales: no IP address specified"
+}
+
+function j49-client-copy-locales-debug()
+{
+	if [ "$1" != "" ];
+	then
+		scp $BuildRoot/sw/nestlabs/app/client/assets/en_US.lproj/Localizable.strings engineering@"$1":/nestlabs/share/client/locales/en_US.lproj/
+		scp $BuildRoot/sw/nestlabs/app/client/assets/es_US.lproj/Localizable.strings engineering@"$1":/nestlabs/share/client/locales/es_US.lproj/
+		scp $BuildRoot/sw/nestlabs/app/client/assets/fr_CA.lproj/Localizable.strings engineering@"$1":/nestlabs/share/client/locales/fr_CA.lproj/
+		return;
+	fi
+
+	echo "j49-client-copy-locales-debug: no IP address specified"
+}
+
+function j49-client-start()
+{
+	if [ "$1" != "" ];
+   then
+		ssh root@"$1" "/etc/init.d/nestlabs start"
+		return;
+   fi
+
+	echo "j49-client-start: no IP address specified"
+}
+
+function j49-client-stop()
+{
+	if [ "$1" != "" ];
+   then
+		ssh root@"$1" "/etc/init.d/nestlabs stop"
+		return;
+   fi
+
+	echo "j49-client-stop: no IP address specified"
+}
+
+function j49-client-start-debug()
+{
+	if [ "$1" != "" ];
+	then
+		ssh engineering@"$1" "/etc/init.d/nestlabs start"
+		return;
+	fi
+
+	echo "j49-client-start-debug: no IP address specified"
+}
+
+function j49-client-stop-debug()
+{
+	if [ "$1" != "" ];
+	then
+		ssh engineering@"$1" "/etc/init.d/nestlabs stop"
+		return;
+	fi
+
+	echo "j49-client-stop-debug: no IP address specified"
+}
+
+function j49-client-restart()
+{
+	if [ "$1" != "" ];
+   then
+		ssh root@"$1" "/etc/init.d/nestlabs restart"
+		return;
+   fi
+
+	echo "j49-client-restart: no IP address specified"
+}
+
+function j49-copy-restart-client()
+{
+	if [ "$1" != "" ];
+	then
+		j49-client-stop $1
+		scp /home/rtinkoff/j49_bashrc root@$1:/root/.bashrc
+		j49-client-copy $1
+		j49-client-copy-locales $1
+		j49-client-start $1
+		return;
+	fi
+	
+	echo "j49-copy-restart-client: no IP address specified"
+}
+
+function j49-copy-restart-client-debug()
+{
+	if [ "$1" != "" ];
+	then
+#		j49-client-stop-debug $1
+		scp /home/rtinkoff/j49_bashrc engineering@$1:/users/engineering/.bashrc
+		j49-client-copy-debug $1
+#		j49-client-copy-locales-debug $1
+#		j49-client-start-debug $1
+		return;
+	fi
+	
+	echo "j49-copy-restart-client: no IP address specified"
+}
+
+function j49-copy-config-restart-client()
+{
+	if [ "$1" != "" ];
+   then
+		j49-client-stop $1
+		j49-client-config-copy $1
+		j49-client-start $1
+		return;
+   fi
+
+	echo "j49-copy-restart-client: no IP address specified"
+}
+
+function copy-bashrc()
+{
+    if [ "$1" != "" ];
+    then
+		scp $BuildRoot/bashrc root@$1:/root/.bashrc
+    fi
+}
+
+function bdxbuild()
+{
+	cd ~/dev/weave/core/; make BuildConfig=development BuildProduct=simulator clean; make BuildConfig=development BuildProduct=simulator
+	cd ~/dev/weave/inet/; make BuildConfig=development BuildProduct=simulator clean; make BuildConfig=development BuildProduct=simulator
+	cd ~/dev/weave/test-apps; make -f StandAlone.mk clean; make -f StandAlone.mk
+}
+
+function bdxrun()
+{
+	cd ~/dev/weave/test-apps
+	./weave-bdx --dest-addr 10.2.11.128 2 --fabric-id 1
+}
+
+function d2h()
+{
+    if [ "$1" == "" ];
+    then
+		echo "usage: d2h [decimal number]"
+        return
+    fi
+
+    printf "0x%x\n" $1
+}
+
+function h2d()
+{
+    if [ "$1" == "" ];
+    then
+		echo "usage: h2d [hex number]"
+        return
+    fi
+
+    printf "%d\n" $1
+}
