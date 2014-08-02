@@ -1,16 +1,16 @@
 ;; Set load-path
 
-(setq load-path (cons "~/root/src/elisp" load-path))
-(setq load-path (cons "~/root/src/elisp/auto-complete-1.3.1" load-path))
-(setq load-path (cons "~/root/src/elisp/cc-mode-5.32.1" load-path))
-(setq load-path (cons "~/root/src/elisp/completion-ui" load-path))
-(setq load-path (cons "~/root/src/elisp/color-theme-6.6.0" load-path))
-(setq load-path (cons "~/root/src/elisp/color-theme-6.6.0/themes" load-path))
-(setq load-path (cons "~/root/src/elisp/amdelisp-2007-01-20/elisp" load-path))
-(setq load-path (cons "~/root/src/elisp/nxml-mode-20041004" load-path))
-(setq load-path (cons "~/root/src/elisp/highlight-parentheses" load-path))
-(setq load-path (cons "~/root/src/global-5.9.4" load-path))
-(setq load-path (cons "~/root/src/elisp/tsgates-git-emacs-cfc65ce" load-path))
+(setq load-path (cons "~/Linux-root/src/elisp" load-path))
+(setq load-path (cons "~/Linux-root/src/elisp/auto-complete-1.3.1" load-path))
+(setq load-path (cons "~/Linux-root/src/elisp/cc-mode-5.32.1" load-path))
+(setq load-path (cons "~/Linux-root/src/elisp/completion-ui" load-path))
+(setq load-path (cons "~/Linux-root/src/elisp/color-theme-6.6.0" load-path))
+(setq load-path (cons "~/Linux-root/src/elisp/color-theme-6.6.0/themes" load-path))
+(setq load-path (cons "~/Linux-root/src/elisp/amdelisp-2007-01-20/elisp" load-path))
+(setq load-path (cons "~/Linux-root/src/elisp/nxml-mode-20041004" load-path))
+(setq load-path (cons "~/Linux-root/src/elisp/highlight-parentheses" load-path))
+(setq load-path (cons "~/Linux-root/src/global-5.9.4" load-path))
+(setq load-path (cons "~/Linux-root/src/elisp/tsgates-git-emacs-cfc65ce" load-path))
 
 (modify-frame-parameters (selected-frame) '((alpha . 90)))
 
