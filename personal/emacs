@@ -354,13 +354,13 @@ nlDeclareDebugLogger(XXXX_P0, XXXX_MAX_LOG_MSG_LEN);
 ;(color-theme-bharadwaj-slate)
 ;(color-theme-aliceblue)
 ;(color-theme-classic)
-;(color-theme-clarity)
+(color-theme-clarity)
 ;(color-theme-jedit-grey)
 ;(color-theme-deep-blue)
 ;(color-theme-gray30)
 ;(color-theme-hober)
 ;(color-theme-midnight)
-(color-theme-jsc-light2)
+;(color-theme-jsc-light2)
 
 ;(load "color-theme-subdued")
 ;(load "color-theme-gruber-dark")
@@ -422,7 +422,7 @@ nlDeclareDebugLogger(XXXX_P0, XXXX_MAX_LOG_MSG_LEN);
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "white" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 110 :width normal :foundry "unknown" :family "Monaco"))))
+ '(default ((t (:inherit nil :stipple nil :background "white" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 105 :width normal :foundry "unknown" :family "Monaco"))))
  '(buffer-menu-buffer ((t (:weight normal))))
  '(ediff-current-diff-A ((((class color)) (:background "blue3" :foreground "yellow3"))))
  '(ediff-current-diff-B ((((class color)) (:background "magenta3" :foreground "yellow3" :weight bold))))
