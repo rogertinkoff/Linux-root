@@ -182,6 +182,11 @@ function e()
 	emacs &
 }
 
+function s()
+{
+	subl . &
+}
+
 function b-copy-nlclient()
 {
 	if [ "$BuildRoot" == "" ];
@@ -356,7 +361,7 @@ function a1-goto()
 #	export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
 	export GIT_EDITOR="emacs"
 
-	cd ~/dev/dolomite/production
+	cd /repos/dolomite/production
 	. build/scripts/environment/setup.sh
 }
 
@@ -494,7 +499,7 @@ function d1-goto()
 #	export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
 	export GIT_EDITOR="emacs"
 
-	cd ~/dev/dolomite/production
+	cd /repos/dolomite/production
 #    cd /mnt/hgfs/CookieBotOS/dolomite/production
 	. build/scripts/environment/setup.sh
 }
@@ -884,7 +889,7 @@ function s1-goto()
     export GIT_EDITOR="emacs"
 
 #   cd /mnt/hgfs/CookieBotOS/sapphire/production
-      cd ~/dev/sapphire/production
+      cd /repos/sapphire/production
    . build/scripts/environment/setup.sh
 #    export BuildProduct=j49
 #    export BuildConfig=development

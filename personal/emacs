@@ -16,6 +16,10 @@
 
 (require 'frame-cmds)
 
+;(require 'highlight-indentation)
+
+;(global-highlight-indentation t)
+
 ;(require 'yasnippet)
 ;(setq yas-global-mode 1)
 
@@ -354,8 +358,8 @@ nlDeclareDebugLogger(XXXX_P0, XXXX_MAX_LOG_MSG_LEN);
 ;(color-theme-bharadwaj-slate)
 ;(color-theme-aliceblue)
 ;(color-theme-classic)
-(color-theme-clarity)
-;(color-theme-jedit-grey)
+;(color-theme-clarity)
+(color-theme-jedit-grey)
 ;(color-theme-deep-blue)
 ;(color-theme-gray30)
 ;(color-theme-hober)
