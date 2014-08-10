@@ -1,0 +1,10 @@
+[
+	{ "keys": ["ctrl+w"], "command": "cut" },
+	{ "keys": ["alt+w"], "command": "copy" },
+	{ "keys": ["ctrl+x", "c"], "command": "build" },
+	{ "keys": ["ctrl+x", "g"], "command": "show_panel", "args": {"panel": "find_in_files"} },
+	{ "keys": ["ctrl+x", "d"], "command": "dired" },
+	{ "keys": ["ctrl+x", "`"], "command": "next_result" },
+	{ "keys": ["ctrl+x", "["], "command": "move_to", "args": {"to": "bof", "extend": false} },
+	{ "keys": ["ctrl+x", "]"], "command": "move_to", "args": {"to": "eof", "extend": false} },
+]

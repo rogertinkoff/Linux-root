@@ -1436,3 +1436,9 @@ function h2d()
 
     printf "%d\n" $1
 }
+
+function lr-goto()
+{
+    export GIT_EDITOR="emacs"
+    cd ~/Linux-root
+}

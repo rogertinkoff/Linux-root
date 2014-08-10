@@ -1,0 +1,4 @@
+{
+	"shell_cmd": "cd /repos/sapphire/production/sw/nestlabs && make BuildConfig=development BuildProduct=j49",
+	"file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
+}
