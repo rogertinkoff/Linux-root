@@ -1,10 +1,12 @@
 {
 	"color_scheme": "Packages/Color Scheme - Default/Blackboard.tmTheme",
 	"font_face": "Monaco",
-	"font_size": 12,
+	"font_size": 11,
+	"highlight_modified_tabs": true,
 	"ignored_packages":
 	[
 		"Vintage"
 	],
+	"limited_tabs_count": 5,
 	"line_numbers": false
 }
