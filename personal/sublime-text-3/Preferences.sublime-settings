@@ -1,5 +1,5 @@
 {
-	"color_scheme": "Packages/Color Scheme - Default/Blackboard.tmTheme",
+	"color_scheme": "Packages/Color Scheme - Default/iPlastic.tmTheme",
 	"font_face": "Monaco",
 	"font_size": 11,
 	"highlight_modified_tabs": true,
@@ -7,6 +7,5 @@
 	[
 		"Vintage"
 	],
-	"limited_tabs_count": 5,
-	"line_numbers": false
+	"line_numbers": true
 }
