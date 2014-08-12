@@ -10,4 +10,6 @@
 	{ "keys": ["ctrl+x", "a"], "command": "show_overlay", "args": {"overlay": "goto", "show_files": true} },
 	{ "keys": ["ctlr+x", "."], "command": "goto_definition" },
 	{ "keys": ["f11"], "command": "reindent"},
+    { "keys": ["ctrl+up"], "command": "next_view_in_stack" },
+	{ "keys": ["ctrl+down"], "command": "prev_view_in_stack" },
 ]
