@@ -179,7 +179,7 @@ PATH=$PATH:~/root/bin:/usr/local
 
 function e()
 {
-	emacs &
+	emacs24 &
 }
 
 function s()
@@ -247,7 +247,7 @@ function b-etag()
 function w1-goto()
 {
     #export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
-	export GIT_EDITOR="emacs"
+	export GIT_EDITOR="emacs24"
     export BuildRoot="/home/rtinkoff/dev/weave"
     cd $BuildRoot
 
@@ -359,7 +359,7 @@ function d1-rsync-source()
 function a1-goto()
 {
 #	export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
-	export GIT_EDITOR="emacs"
+	export GIT_EDITOR="emacs24"
 
 	cd /repos/dolomite/production
 	. build/scripts/environment/setup.sh
@@ -497,7 +497,7 @@ function a1-bt-shell()
 function d1-goto()
 {
 #	export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
-	export GIT_EDITOR="emacs"
+	export GIT_EDITOR="emacs24"
 
 	cd /repos/dolomite/production
 #    cd /mnt/hgfs/CookieBotOS/dolomite/production
@@ -885,8 +885,8 @@ function d1-etag()
 
 function s1-goto()
 {
-	export GIT_EXTERNAL_DIFF="xxdiff"
-    export GIT_EDITOR="emacs"
+#	export GIT_EXTERNAL_DIFF="xxdiff"
+    export GIT_EDITOR="emacs24"
 
 #   cd /mnt/hgfs/CookieBotOS/sapphire/production
       cd /repos/sapphire/production
@@ -1210,7 +1210,7 @@ function s1-generate-debug-headers()
 function s2-goto()
 {
 	export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
-	export GIT_EDITOR="emacs"
+	export GIT_EDITOR="emacs24"
 
 	cd ~/dev/sapphire2/production
 	. build/scripts/environment/setup.sh
@@ -1439,7 +1439,7 @@ function h2d()
 
 function lr-goto()
 {
-    export GIT_EDITOR="emacs"
+    export GIT_EDITOR="emacs24"
     export BuildRoot="/home/rtinkoff/Linux-root"
     cd ~/Linux-root
 }
