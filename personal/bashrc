@@ -131,7 +131,8 @@ PROMPT_COMMAND="find_git_branch; $PROMPT_COMMAND"
 #export PS1="$txtwht\u@\h:\w\[$txtcyn\] \$git_branch\[$txtred\]\$git_dirty\[$txtrst\]\n> "
 
 # Another variant:
-export PS1="\[$bldpur\]\u@\h\[$bldblu\] \w\[$txtrst\] \$git_branch\[$txtred\]\$git_dirty\[$txtrst\]\n> "
+export PS1="\[$bldgrn\]\u@\h\[$bldylw\] \w\[$txtrst\] \$git_branch\[$txtblu\]\$git_dirty\[$txtrst\]\n> "
+#export PS1="\[$bldpur\]\u@\h\[$bldblu\] \w\[$txtrst\] \$git_branch\[$txtred\]\$git_dirty\[$txtrst\]\n> "
 #export PS1="\[$bldgrn\]\u@\h\[$bldwht\] \w\[$txtrst\] \$git_branch\[$txtred\]\$git_dirty\[$txtrst\]\n> "
 #export PS1="\[$bldgrn\]\u@\h\[$bldwht\] \w\[$txtrst\]$bldcyn $git_branch\n$txtrst> "
 #export PS1="\[$bldpur\]\u@\h\[$bldblu\] \w\[$txtrst\]$bldpur $git_branch\n$txtrst> "
@@ -185,17 +186,6 @@ function e()
 function s()
 {
 	subl . &
-}
-
-function b-copy-nlclient()
-{
-	if [ "$BuildRoot" == "" ];
-   then
-		echo "b-etag: no BuildRoot defined"
-		return -1
-   fi
-
-	scp $BuildRoot/results/j49/codesourcery/sourcery-gxx/2010q1-202/development/sw/nestlabs/app/client/nlclient root@10.2.0.160:/nestlabs/sbin
 }
 
 function b-etag()
@@ -1019,49 +1009,6 @@ function s1-install-client()
     cd $BuildRoot/
 }
 
-function s1-install-bashrc()
-{
-    if [ "$BuildRoot" == "" ];
-	then
-		echo "s1-install-bashrc: no BuildRoot defined"
-		return
-	fi
-
-    if [ "$1" == "" ];
-	then
-		echo "Usage: s1-install-bashrc [Diamond IP addr]"
-		return
-	fi
-
-    cd $BuildRoot/sw/nestlabs/app/client/
-    make BuildConfig=development BuildProduct=j49 DeviceAddress=$1 BashrcFile=~/diamond_bashrc quick-install-bashrc
-    cd $BuildRoot/
-}
-
-function s1-install-client-config()
-{
-    if [ "$BuildRoot" == "" ];
-	then
-		echo "s1-install-client-config: no BuildRoot defined"
-		return
-	fi
-
-    if [ "$1" == "" ];
-	then
-		echo "Usage: s1-install-client-config [Diamond IP addr]"
-		return
-	fi
-
-    cd $BuildRoot/sw/nestlabs/app/client/
-    make BuildConfig=development BuildProduct=j49 DeviceAddress=$1 ClientConfigFile=/mnt/hgfs/rtinkoff/diamond_client_config quick-install-config
-    cd $BuildRoot/
-}
-
-function s1-install-all()
-{
-    s1-install-bashrc $1 && s1-install-client-config $1
-}
-
 function s1-install-wpan-tunnel-driver()
 {
     if [ "$BuildRoot" == "" ];
@@ -1100,319 +1047,17 @@ function s1-install-connman()
     cd $BuildRoot/
 }
 
-function s1-rsync-source()
-{
-	rsync -u --exclude *.git* --exclude *.depend* --exclude *xcode* --exclude *Xcode* -rav --progress rtinkoff@GreenBuggy.local:sapphire-s1/ ~/dev/sapphire
-#	rsync -u --exclude *.git* --exclude *.depend* --exclude *xcode* --exclude *Xcode* -rav --progress /mnt/hgfs/NestDev/sapphire ~/dev
-#	rsync -u -rav --exclude *.git* /mnt/hgfs/NestDev/sapphire ~/dev
-}
-
-function s1-rsync-results()
-{
-	rsync -urav $BuildRoot/results/j49/codesourcery/sourcery-gxx/2010q1-202/development/image/client_stream_image/ rtinkoff@tuco.local:Desktop/sapphire-s1-results/
-#	rsync -u --exclude *.git* --exclude *.depend* --exclude *xcode* --exclude *Xcode* -rav --progress /mnt/hgfs/NestDev/sapphire ~/dev
-#	rsync -u -rav --exclude *.git* /mnt/hgfs/NestDev/sapphire ~/dev
-}
-
-function s1-gdh-replace()
-{
-    if [ "$BuildRoot" == "" ];
-	then
-		echo "s1-gdh-replace: no BuildRoot defined"
-		return
-	fi
-
-    if [ "$1" == "" ];
-    then
-	    echo "s1-gdh-replace: usage 's1-gdh-replace <suffix> <prefix> <tag> <inputfile> <outputfile>'"
-	    return -1
-    fi
-
-    if [ "$2" == "" ];
-    then
-	    echo "s1-gdh-replace: usage 's1-gdh-replace <suffix> <prefix> <tag> <inputfile> <outputfile>'"
-	    return -1
-    fi
-
-    if [ "$3" == "" ];
-    then
-	    echo "s1-gdh-replace: usage 's1-gdh-replace <suffix> <prefix> <tag> <inputfile> <outputfile>'"
-	    return -1
-    fi
-
-    if [ "$4" == "" ];
-    then
-	    echo "s1-gdh-replace: usage 's1-gdh-replace <suffix> <prefix> <tag> <inputfile> <outputfile>'"
-	    return -1
-    fi
-
-    if [ "$5" == "" ];
-    then
-	    echo "s1-gdh-replace: usage 's1-gdh-replace <suffix> <prefix> <tag> <inputfile> <outputfile>'"
-	    return -1
-    fi
-
-    sed -e 's/_XXX_FUNC_SUFFIX/_'"$1"'/g' \
-        -e 's/XXX_DEBUG_OUTPUT_PREFIX/'"$2"'/g' \
-        -e 's/XXX_PREPROCESSOR_TAG/'"$3"'/g' \
-    < $4 > $5
-}
-
-function s1-gdh()
-{
-    if [ "$BuildRoot" == "" ];
-	then
-		echo "s1-gdh: no BuildRoot defined"
-		return
-	fi
-
-    s1-gdh-replace DD DEVICE_DESCRIPTION_SERVER NL_DEVICE_DESCRIPTION_SERVER $BuildRoot/sw/nestlabs/app/weave/src/nldebugoutputtempate.h $BuildRoot/sw/nestlabs/app/weave/src/nldevicedescriptionserverdebug.h
-    s1-gdh-replace FP FABRIC_PROVISIONING_SERVER NL_FABRIC_PROVISIONING_SERVER $BuildRoot/sw/nestlabs/app/weave/src/nldebugoutputtempate.h $BuildRoot/sw/nestlabs/app/weave/src/nlfabricprovisioningserverdebug.h
-    s1-gdh-replace NP NETWORK_PROVISIONING_SERVER NL_NETWORK_PROVISIONING_SERVER $BuildRoot/sw/nestlabs/app/weave/src/nldebugoutputtempate.h $BuildRoot/sw/nestlabs/app/weave/src/nlnetworkprovisioningserverdebug.h
-    s1-gdh-replace SME STATE_MACHINE_EXTRAS NL_STATE_MACHINE_EXTRAS $BuildRoot/sw/nestlabs/app/weave/src/nldebugoutputtempate.h $BuildRoot/sw/nestlabs/app/weave/src/nlstatemachineextrasdebug.h
-    s1-gdh-replace WPS WEAVE_PROVISIONING_STATES NL_WEAVE_PROVISIONING_STATES $BuildRoot/sw/nestlabs/app/weave/src/nldebugoutputtempate.h $BuildRoot/sw/nestlabs/app/weave/src/nlweaveprovisioningstatesdebug.h
-    s1-gdh-replace WU WEAVE_UTILITIES NL_WEAVE_UTILITIES $BuildRoot/sw/nestlabs/app/weave/src/nldebugoutputtempate.h $BuildRoot/sw/nestlabs/app/weave/src/nlweaveutilitiesdebug.h  
-}
-
-function s1-generate-debug-headers()
-{
-    if [ "$BuildRoot" == "" ];
-	then
-		echo "s1-generate-debug-headers: no BuildRoot defined"
-		return
-	fi
-
-    rm -f ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nldevicedescriptionserverdebug.h
-    touch ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nldevicedescriptionserverdebug.h
-    ~/dev/tools/DebugHeaderGenerator/DebugHeaderGenerator --output-file ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nldevicedescriptionserverdebug.h --debug-prefix DEVICE_DESCRIPTION_SERVER --function-suffix DD
-
-    rm -f ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlfabricprovisioningserverdebug.h
-    touch ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlfabricprovisioningserverdebug.h
-    ~/dev/tools/DebugHeaderGenerator/DebugHeaderGenerator --output-file ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlfabricprovisioningserverdebug.h --debug-prefix FABRIC_PROVISIONING_SERVER --function-suffix FP
-
-    rm -f ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlnetworkprovisioningserverdebug.h
-    touch ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlnetworkprovisioningserverdebug.h
-    ~/dev/tools/DebugHeaderGenerator/DebugHeaderGenerator --output-file ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlnetworkprovisioningserverdebug.h --debug-prefix NETWORK_PROVISIONING_SERVER --function-suffix NP
-
-    rm -f ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlstatemachineextrasdebug.h
-    touch ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlstatemachineextrasdebug.h
-    ~/dev/tools/DebugHeaderGenerator/DebugHeaderGenerator --output-file ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlstatemachineextrasdebug.h --debug-prefix STATE_MACHINE_EXTRAS --function-suffix SME
-
-    rm -f ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlweaveprovisioningstatesdebug.h
-    touch ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlweaveprovisioningstatesdebug.h
-    ~/dev/tools/DebugHeaderGenerator/DebugHeaderGenerator --output-file ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlweaveprovisioningstatesdebug.h --debug-prefix WEAVE_PROVISIONING_STATES --function-suffix WPS
-
-    rm -f ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlweaveutilitiesdebug.h
-    touch ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlweaveutilitiesdebug.h
-    ~/dev/tools/DebugHeaderGenerator/DebugHeaderGenerator --output-file ~/dev/sapphire/production/sw/nestlabs/app/weave/src/nlweaveutilitiesdebug.h --debug-prefix WEAVE_UTILITIES --function-suffix WU
-}
-
 function s2-goto()
 {
-	export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
-	export GIT_EDITOR="emacs24"
+#	export GIT_EXTERNAL_DIFF="xxdiff"
+    export GIT_EDITOR="emacs24"
 
-	cd ~/dev/sapphire2/production
-	. build/scripts/environment/setup.sh
+#   cd /mnt/hgfs/CookieBotOS/sapphire/production
+      cd /repos/sapphire2/production
+   . build/scripts/environment/setup.sh
 #    export BuildProduct=j49
 #    export BuildConfig=development
 #    cd sw/nestlabs/app
-}
-
-function s2-rsync-source()
-{
-	rsync -u --exclude *.git* --exclude *.depend* --exclude *xcode* --exclude *Xcode* -rav --progress rtinkoff@GreenBuggy.local:sapphire-s2/ ~/dev/sapphire2
-#	rsync -u --exclude *.git* --exclude *.depend* --exclude *xcode* --exclude *Xcode* -rav --progress /mnt/hgfs/NestDev/sapphire ~/dev
-#	rsync -u -rav --exclude *.git* /mnt/hgfs/NestDev/sapphire ~/dev
-}
-
-function t1-goto()
-{
-    mkdir -p ~/dev/tools
-    cd ~/dev/tools
-}
-
-function copy-j49-image()
-{
-   cp -v results/j49/codesourcery/sourcery-gxx/2010q1-202/development/image/client_stream_image/*.tgz /mnt/hgfs/NestDev/
-}
-
-function j49-client-copy()
-{
-	if [ "$1" != "" ];
-   then
-		scp $BuildRoot/results/j49/codesourcery/sourcery-gxx/2010q1-202/development/sw/nestlabs/app/client/nlclient root@"$1":/nestlabs/sbin
-		return;
-   fi
-
-	echo "j49-client-copy: no IP address specified"
-}
-
-function j49-client-copy-debug()
-{
-	if [ "$1" != "" ];
-	then
-		scp $BuildRoot/results/j49/codesourcery/sourcery-gxx/2010q1-202/debug/sw/nestlabs/app/client/nlclient engineering@"$1":/users/engineering
-		return;
-	fi
-
-	echo "j49-client-copy-debug: no IP address specified"
-}
-
-function j49-client-config-copy()
-{
-	if [ "$1" != "" ];
-   then
-		scp $BuildRoot/sw/nestlabs/app/setup/client.config root@$1:/etc/nestlabs
-		return;
-   fi
-
-	echo "j49-client-copy: no IP address specified"
-}
-
-function j49-client-copy-locales()
-{
-	if [ "$1" != "" ];
-   then
-		scp $BuildRoot/sw/nestlabs/app/client/assets/en_US.lproj/Localizable.strings root@"$1":/nestlabs/share/client/locales/en_US.lproj/
-		scp $BuildRoot/sw/nestlabs/app/client/assets/es_US.lproj/Localizable.strings root@"$1":/nestlabs/share/client/locales/es_US.lproj/
-		scp $BuildRoot/sw/nestlabs/app/client/assets/fr_CA.lproj/Localizable.strings root@"$1":/nestlabs/share/client/locales/fr_CA.lproj/
-		return;
-   fi
-
-	echo "j49-client-copy-locales: no IP address specified"
-}
-
-function j49-client-copy-locales-debug()
-{
-	if [ "$1" != "" ];
-	then
-		scp $BuildRoot/sw/nestlabs/app/client/assets/en_US.lproj/Localizable.strings engineering@"$1":/nestlabs/share/client/locales/en_US.lproj/
-		scp $BuildRoot/sw/nestlabs/app/client/assets/es_US.lproj/Localizable.strings engineering@"$1":/nestlabs/share/client/locales/es_US.lproj/
-		scp $BuildRoot/sw/nestlabs/app/client/assets/fr_CA.lproj/Localizable.strings engineering@"$1":/nestlabs/share/client/locales/fr_CA.lproj/
-		return;
-	fi
-
-	echo "j49-client-copy-locales-debug: no IP address specified"
-}
-
-function j49-client-start()
-{
-	if [ "$1" != "" ];
-   then
-		ssh root@"$1" "/etc/init.d/nestlabs start"
-		return;
-   fi
-
-	echo "j49-client-start: no IP address specified"
-}
-
-function j49-client-stop()
-{
-	if [ "$1" != "" ];
-   then
-		ssh root@"$1" "/etc/init.d/nestlabs stop"
-		return;
-   fi
-
-	echo "j49-client-stop: no IP address specified"
-}
-
-function j49-client-start-debug()
-{
-	if [ "$1" != "" ];
-	then
-		ssh engineering@"$1" "/etc/init.d/nestlabs start"
-		return;
-	fi
-
-	echo "j49-client-start-debug: no IP address specified"
-}
-
-function j49-client-stop-debug()
-{
-	if [ "$1" != "" ];
-	then
-		ssh engineering@"$1" "/etc/init.d/nestlabs stop"
-		return;
-	fi
-
-	echo "j49-client-stop-debug: no IP address specified"
-}
-
-function j49-client-restart()
-{
-	if [ "$1" != "" ];
-   then
-		ssh root@"$1" "/etc/init.d/nestlabs restart"
-		return;
-   fi
-
-	echo "j49-client-restart: no IP address specified"
-}
-
-function j49-copy-restart-client()
-{
-	if [ "$1" != "" ];
-	then
-		j49-client-stop $1
-		scp /home/rtinkoff/j49_bashrc root@$1:/root/.bashrc
-		j49-client-copy $1
-		j49-client-copy-locales $1
-		j49-client-start $1
-		return;
-	fi
-	
-	echo "j49-copy-restart-client: no IP address specified"
-}
-
-function j49-copy-restart-client-debug()
-{
-	if [ "$1" != "" ];
-	then
-#		j49-client-stop-debug $1
-		scp /home/rtinkoff/j49_bashrc engineering@$1:/users/engineering/.bashrc
-		j49-client-copy-debug $1
-#		j49-client-copy-locales-debug $1
-#		j49-client-start-debug $1
-		return;
-	fi
-	
-	echo "j49-copy-restart-client: no IP address specified"
-}
-
-function j49-copy-config-restart-client()
-{
-	if [ "$1" != "" ];
-   then
-		j49-client-stop $1
-		j49-client-config-copy $1
-		j49-client-start $1
-		return;
-   fi
-
-	echo "j49-copy-restart-client: no IP address specified"
-}
-
-function copy-bashrc()
-{
-    if [ "$1" != "" ];
-    then
-		scp $BuildRoot/bashrc root@$1:/root/.bashrc
-    fi
-}
-
-function bdxbuild()
-{
-	cd ~/dev/weave/core/; make BuildConfig=development BuildProduct=simulator clean; make BuildConfig=development BuildProduct=simulator
-	cd ~/dev/weave/inet/; make BuildConfig=development BuildProduct=simulator clean; make BuildConfig=development BuildProduct=simulator
-	cd ~/dev/weave/test-apps; make -f StandAlone.mk clean; make -f StandAlone.mk
-}
-
-function bdxrun()
-{
-	cd ~/dev/weave/test-apps
-	./weave-bdx --dest-addr 10.2.11.128 2 --fabric-id 1
 }
 
 function d2h()

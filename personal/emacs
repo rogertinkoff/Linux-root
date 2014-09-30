@@ -12,13 +12,15 @@
 (setq load-path (cons "~/Linux-root/src/global-5.9.4" load-path))
 (setq load-path (cons "~/Linux-root/src/elisp/tsgates-git-emacs-cfc65ce" load-path))
 
-(modify-frame-parameters (selected-frame) '((alpha . 90)))
+(modify-frame-parameters (selected-frame) '((alpha . 100)))
 
 (require 'frame-cmds)
 
 (electric-pair-mode 1)
 
-;(require 'highlight-indentation)
+;(require 'highlight-chars)
+
+(require 'highlight-indentation)
 
 ;(global-highlight-indentation t)
 
@@ -27,6 +29,8 @@
 
 ;(set-frame-font "Mono")
 ;(set-face-attribute 'default nil :height 90)
+
+(require 'smooth-scrolling)
 
 ;; Auto-complete
 
@@ -363,7 +367,7 @@ nlDeclareDebugLogger(XXXX_P0, XXXX_MAX_LOG_MSG_LEN);
 ;(color-theme-classic)
 ;(color-theme-clarity)
 ;(color-theme-jedit-grey)
-(color-theme-deep-blue)
+;(color-theme-deep-blue)
 ;(color-theme-gray30)
 ;(color-theme-hober)
 ;(color-theme-midnight)
@@ -372,6 +376,15 @@ nlDeclareDebugLogger(XXXX_P0, XXXX_MAX_LOG_MSG_LEN);
 ;(load "color-theme-subdued")
 ;(load "color-theme-gruber-dark")
 ;(color-theme-subdued)
+;(load "color-theme-cobalt")
+;(color-theme-cobalt)
+;(load "color-theme-mac-classic")
+;(color-theme-mac-classic)
+;(load "ample-zen-theme")
+;(ample-zen-theme)
+;(load "deviant-theme")
+;(load "ritchie-theme")
+(load "monokai-theme")
 
 (setq ediff-split-window-function 'split-window-horizontally)
 
