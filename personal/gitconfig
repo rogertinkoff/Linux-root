@@ -17,3 +17,5 @@
    co = checkout
    l = log
    qlog = log --graph --color --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(blue)<%an>%Creset' --abbrev-commit --date=relative
+[rerere]
+	enabled = true

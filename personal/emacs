@@ -27,8 +27,8 @@
 ;(require 'yasnippet)
 ;(setq yas-global-mode 1)
 
-;(set-frame-font "Mono")
-;(set-face-attribute 'default nil :height 90)
+(set-frame-font "Monaco")
+(set-face-attribute 'default nil :height 110)
 
 (require 'smooth-scrolling)
 
@@ -242,6 +242,7 @@ nlDeclareDebugLogger(XXXX_P0, XXXX_MAX_LOG_MSG_LEN);
 (global-set-key (kbd "\C-x [") 'beginning-of-buffer)
 (global-set-key (kbd "\C-x ]") 'end-of-buffer)
 (global-set-key (kbd "\C-x m") 'maximize-frame)
+(global-set-key (kbd "\C-x r") 'revert-buffer )
 
 (global-set-key (kbd "RET") 'newline-and-indent)
 (global-set-key "\C-c\C-c" 'comment-region)
@@ -376,15 +377,15 @@ nlDeclareDebugLogger(XXXX_P0, XXXX_MAX_LOG_MSG_LEN);
 ;(load "color-theme-subdued")
 ;(load "color-theme-gruber-dark")
 ;(color-theme-subdued)
-;(load "color-theme-cobalt")
-;(color-theme-cobalt)
+(load "color-theme-cobalt")
+(color-theme-cobalt)
 ;(load "color-theme-mac-classic")
 ;(color-theme-mac-classic)
 ;(load "ample-zen-theme")
 ;(ample-zen-theme)
 ;(load "deviant-theme")
 ;(load "ritchie-theme")
-(load "monokai-theme")
+;(load "monokai-theme")
 
 (setq ediff-split-window-function 'split-window-horizontally)
 
@@ -437,21 +438,3 @@ nlDeclareDebugLogger(XXXX_P0, XXXX_MAX_LOG_MSG_LEN);
  '(split-height-threshold 0)
  '(tags-case-fold-search t)
  '(tool-bar-mode nil))
-
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 115 :width normal :foundry "unknown" :family "Monaco"))))
- ;;'(buffer-menu-buffer ((t (:weight normal))))
- ;;'(ediff-current-diff-A ((((class color)) (:background "blue3" :foreground "yellow3"))))
- ;;'(ediff-current-diff-B ((((class color)) (:background "magenta3" :foreground "yellow3" :weight bold))))
- ;;'(ediff-fine-diff-A ((((class color)) (:background "blue3" :foreground "yellow3" :weight bold))))
- ;;'(ediff-fine-diff-B ((((class color)) (:background "magenta3" :foreground "yellow3"))))
- ;;'(mode-line ((t (:background "grey75" :foreground "black" :box (:line-width -1 :style released-button) :height 1.0 :width normal))))
- ;;'(mode-line-buffer-id ((t (:weight normal))))
- ;;'(mode-line-emphasis ((t (:weight normal))))
- ;;'(mode-line-inactive ((t (:background "grey30" :foreground "grey80" :box (:line-width -1 :color "grey40") :weight light :height 1.0 :width normal))))
- ;;'(which-func ((((class color) (min-colors 88) (background dark)) (:foreground "blue")))))
- )
