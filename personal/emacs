@@ -377,8 +377,8 @@ nlDeclareDebugLogger(XXXX_P0, XXXX_MAX_LOG_MSG_LEN);
 ;(load "color-theme-subdued")
 ;(load "color-theme-gruber-dark")
 ;(color-theme-subdued)
-(load "color-theme-cobalt")
-(color-theme-cobalt)
+;(load "color-theme-cobalt")
+;(color-theme-cobalt)
 ;(load "color-theme-mac-classic")
 ;(color-theme-mac-classic)
 ;(load "ample-zen-theme")
@@ -386,6 +386,10 @@ nlDeclareDebugLogger(XXXX_P0, XXXX_MAX_LOG_MSG_LEN);
 ;(load "deviant-theme")
 ;(load "ritchie-theme")
 ;(load "monokai-theme")
+;(load "professional-theme")
+;(load "oldlace-theme")
+;(load "flatui-theme")
+(load "leuven-theme")
 
 (setq ediff-split-window-function 'split-window-horizontally)
 
@@ -425,16 +429,23 @@ nlDeclareDebugLogger(XXXX_P0, XXXX_MAX_LOG_MSG_LEN);
 (setq savehist-mode t)
 (setq c-default-style "bsd" c-basic-offset 4)
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(blink-cursor-mode nil)
  '(case-fold-search t)
  '(compile-command "cd $BuildRoot/sw/nestlabs; make BuildProduct=j49 BuildConfig=development ")
  '(completion-ignore-case t t)
  '(initial-frame-alist (quote ((fullscreen . maximized))))
+ '(mode-line-format (quote ("%e" mode-line-front-space mode-line-client mode-line-modified mode-line-remote mode-line-frame-identification mode-line-buffer-identification "   " mode-line-position (vc-mode vc-mode) "  " mode-line-modes mode-line-misc-info mode-line-end-spaces)))
  '(show-paren-mode t)
  '(split-height-threshold 0)
  '(tags-case-fold-search t)
  '(tool-bar-mode nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
