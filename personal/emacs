@@ -288,7 +288,7 @@ nlDeclareDebugLogger(XXXX_P0, XXXX_MAX_LOG_MSG_LEN);
  "Create the non-numeric backup file name for `file-name'."
  (require 'dired)
  (if (file-exists-p "/Users/rtinkoff/backups")
-     (concat (expand-file-name "/Users/rtinkoff/backups/")
+     (concat (expand-file-name "/home/rtinkoff/backups/")
 	      (replace-regexp-in-string "/" "!" file-name))
    (concat file-name "~")))
 
@@ -389,7 +389,7 @@ nlDeclareDebugLogger(XXXX_P0, XXXX_MAX_LOG_MSG_LEN);
 ;(load "professional-theme")
 ;(load "oldlace-theme")
 ;(load "flatui-theme")
-(load "leuven-theme")
+;(load "leuven-theme")
 
 (setq ediff-split-window-function 'split-window-horizontally)
 

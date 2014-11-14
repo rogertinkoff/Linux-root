@@ -180,7 +180,17 @@ PATH=$PATH:~/root/bin:/usr/local
 
 function e()
 {
-	emacs24 &
+	emacs24 --load "/home/rtinkoff/Linux-root/src/elisp/leuven-theme.el" &
+}
+
+function elight()
+{
+	emacs24 --load "/home/rtinkoff/Linux-root/src/elisp/leuven-theme.el" &
+}
+
+function edark()
+{
+	emacs24 --load "/home/rtinkoff/Linux-root/src/elisp/monokai-theme.el" &
 }
 
 function s()
@@ -489,7 +499,7 @@ function d1-goto()
 #	export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
 	export GIT_EDITOR="emacs24"
 
-	cd /repos/dolomite/production
+	cd ~/dev/dolomite/production
 #    cd /mnt/hgfs/CookieBotOS/dolomite/production
 	. build/scripts/environment/setup.sh
 }
@@ -879,7 +889,7 @@ function s1-goto()
     export GIT_EDITOR="emacs24"
 
 #   cd /mnt/hgfs/CookieBotOS/sapphire/production
-      cd /repos/sapphire/production
+      cd ~/dev/sapphire/production
    . build/scripts/environment/setup.sh
 #    export BuildProduct=j49
 #    export BuildConfig=development
@@ -962,6 +972,24 @@ function s1-build-nl-image()
     cd $BuildRoot
 }
 
+function s1-build-nl-image-diamond()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "s1-build-nl-image: no BuildRoot defined"
+		return
+	fi
+
+    cd $BuildRoot/sw/nestlabs && make BuildConfig=development BuildProduct=diamond &&
+    cd $BuildRoot/sw/init && make BuildConfig=development BuildProduct=diamond &&
+    cd $BuildRoot/sw/setup && make BuildConfig=development BuildProduct=diamond &&
+    cd $BuildRoot/sw/users && make BuildConfig=development BuildProduct=diamond &&
+    cd $BuildRoot/fw && make BuildConfig=development BuildProduct=diamond &&
+    cd $BuildRoot/fs && make BuildConfig=development BuildProduct=diamond &&
+    cd $BuildRoot/image && make BuildConfig=development BuildProduct=diamond &&
+    cd $BuildRoot
+}
+
 function s1-rebuild()
 {
     s1-goto && rm -rf results/j49 && make clean-j49-development && make j49-development
@@ -976,6 +1004,17 @@ function s1-strip-client()
 	fi
 
     /usr/local/CodeSourcery/Sourcery_G++_Lite/2010q1-202/bin/arm-none-linux-gnueabi-strip $BuildRoot/results/j49/codesourcery/sourcery-gxx/2010q1-202/development/sw/nestlabs/app/client/nlclient
+}
+
+function s1-strip-client-diamond()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "s1-install-client: no BuildRoot defined"
+		return
+	fi
+
+    /usr/local/CodeSourcery/Sourcery_G++_Lite/2010q1-202/bin/arm-none-linux-gnueabi-strip $BuildRoot/results/diamond/codesourcery/sourcery-gxx/2010q1-202/development/sw/nestlabs/app/client/nlclient
 }
 
 function s1-gdb-client()
@@ -1053,7 +1092,7 @@ function s2-goto()
     export GIT_EDITOR="emacs24"
 
 #   cd /mnt/hgfs/CookieBotOS/sapphire/production
-      cd /repos/sapphire2/production
+      cd ~/dev/sapphire2/production
    . build/scripts/environment/setup.sh
 #    export BuildProduct=j49
 #    export BuildConfig=development
