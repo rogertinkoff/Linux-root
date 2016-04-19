@@ -149,7 +149,7 @@ int main(int argc, char **argv)
 
 //    DrawLine(frameBuf, 1, 4, 0);
 
-    DrawCircle(frameBuf, 0, 0, 5, 1);
+    DrawCircle(frameBuf, 0, 0, 8, 1);
 
     Render(frameBuf);
     

@@ -28,7 +28,7 @@
 ;(setq yas-global-mode 1)
 
 (set-frame-font "Monaco")
-(set-face-attribute 'default nil :height 110)
+(set-face-attribute 'default nil :height 130)
 
 (require 'smooth-scrolling)
 
@@ -383,13 +383,16 @@ nlDeclareDebugLogger(XXXX_P0, XXXX_MAX_LOG_MSG_LEN);
 ;(color-theme-mac-classic)
 ;(load "ample-zen-theme")
 ;(ample-zen-theme)
+;(load "grandshell-theme")
+;(load "underwater-theme")
+;(underwater-theme)
 ;(load "deviant-theme")
 ;(load "ritchie-theme")
 ;(load "monokai-theme")
 ;(load "professional-theme")
 ;(load "oldlace-theme")
 ;(load "flatui-theme")
-;(load "leuven-theme")
+(load "leuven-theme")
 
 (setq ediff-split-window-function 'split-window-horizontally)
 

@@ -160,6 +160,10 @@ alias rebash='source ~/.bashrc'
 alias h='history'
 alias hgrep='history | grep'
 
+alias md1='nlmake.sh -p d1 -c dev'
+alias md2='nlmake.sh -p d2 -c dev'
+alias md3='nlmake.sh -p d3 -c dev'
+
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
@@ -180,7 +184,7 @@ PATH=$PATH:~/root/bin:/usr/local
 
 function e()
 {
-	emacs24 --load "/home/rtinkoff/Linux-root/src/elisp/leuven-theme.el" &
+	emacs24 &
 }
 
 function elight()
@@ -190,7 +194,17 @@ function elight()
 
 function edark()
 {
+	emacs24 --load "/home/rtinkoff/Linux-root/src/elisp/evenhold-theme.el" &
+}
+
+function egrey()
+{
 	emacs24 --load "/home/rtinkoff/Linux-root/src/elisp/monokai-theme.el" &
+}
+
+function eblue()
+{
+	e
 }
 
 function s()
@@ -252,6 +266,47 @@ function w1-goto()
     cd $BuildRoot
 
     echo "BuildRoot=$BuildRoot"
+}
+
+function w1-etag()
+{
+   if [ "$BuildRoot" == "" ];
+   then
+	echo "w1-etag: no BuildRoot defined"
+	return -1
+   fi
+
+   echo "*** cd to BuildRoot $BuildRoot"
+
+   cd $BuildRoot
+
+   TAGS_FILE=TAGS
+
+   rm -f $TAGS_FILE
+   touch $TAGS_FILE
+
+   TAG_DIRS="\
+   src \
+   "
+
+   for i in $TAG_DIRS;
+   do
+	echo "*** Tagging directory $i"
+	find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
+   done
+
+   echo "*** Tagging complete - file is $BuildRoot/$TAGS_FILE"
 }
 
 function w1-rebuild()
@@ -356,118 +411,6 @@ function d1-rsync-source()
 #	rsync -u -rav --exclude *.git* /mnt/hgfs/NestDev/sapphire ~/dev
 }
 
-function a1-goto()
-{
-#	export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
-	export GIT_EDITOR="emacs24"
-
-	cd /repos/dolomite/production
-	. build/scripts/environment/setup.sh
-}
-
-function a1-etag()
-{
-    if [ "$BuildRoot" == "" ];
-    then
-	    echo "a1-etag: no BuildRoot defined"
-	    return -1
-    fi
-
-    echo "*** cd to BuildRoot $BuildRoot"
-
-    cd $BuildRoot
-
-    TAGS_FILE=TAGS
-
-    rm -f $TAGS_FILE
-    touch $TAGS_FILE
-
-    TAG_DIRS="\
-      sw/nestlabs \
-      sw/tps/lwip
-      "
-
-    for i in $TAG_DIRS;
-    do
-	    echo "*** Tagging directory $i"
-	    find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
-	    find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
-	    find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
-	    find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
-	    find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
-	    find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
-	    find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
-	    find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
-	    find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
-	    find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
-	    find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
-	    find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
-        find $i -name "*.config" | xargs etags --output=$TAGS_FILE --append
-        find $i -name "*.py" | xargs etags --output=$TAGS_FILE --append
-        find $i -name "messages*" | xargs etags --output=$TAGS_FILE --append
-        find $i -name "nlclient*" | xargs etags --output=$TAGS_FILE --append
-        find $i -name "nlevent*" | xargs etags --output=$TAGS_FILE --append
-        find $i -name "*.txt" | xargs etags --output=$TAGS_FILE --append
-    done
-
-    TAG_FILES="\
-      /home/rtinkoff/.emacs \
-      /home/rtinkoff/.bashrc \
-      /home/rtinkoff/.gdbinit \
-      "
-
-    for i in $TAG_FILES;
-    do
-	    echo "*** Tagging file $i"
-	    etags --output=$TAGS_FILE --append $i
-    done
-
-    echo "*** Tagging complete - file is $BuildRoot/$TAGS_FILE"
-}
-
-function a1-master()
-{
-    a1-goto
-    git checkout product/a67/master
-}
-
-function a1-build()
-{
-    a1-goto && make amber-development
-}
-
-function a1-rebuild()
-{
-    a1-goto && rm -rf results/ && make clean-amber-development && make amber-development
-}
-
-function a1-copy-image()
-{
-    if [ "$BuildRoot" == "" ];
-	then
-		echo "a1-copy-image: no BuildRoot defined"
-		return -1
-	fi
-
-    rm -rfv /mnt/hgfs/rtinkoff/Desktop/builds/*
-
-    cp -v $BuildRoot/results/amber/apple/llvm-armv7m/3.3/development/image/app_stream_image/* /mnt/hgfs/rtinkoff/Desktop/builds
-    cp -v $BuildRoot/results/amber/apple/llvm-armv7m/3.3/development/image/shell_stream_image/* /mnt/hgfs/rtinkoff/Desktop/builds
-}
-
-function a1-install-shell()
-{
-	if [ "$BuildRoot" == "" ];
-	then
-		echo "a1-install-shell: no BuildRoot defined"
-		return -1
-	fi
-
-	cd $BuildRoot/sw/nestlabs/apps/shell
-	make BuildProduct=amber BuildConfig=development Verbose= flash-shell SUDO="sudo -E"
-	cd $BuildRoot
-}
-
 function a1-install-app()
 {
 	if [ "$BuildRoot" == "" ];
@@ -476,23 +419,36 @@ function a1-install-app()
 		return -1
 	fi
 
-	cd $BuildRoot/sw/nestlabs/apps/amber
-	make BuildProduct=amber BuildConfig=development Verbose= flash SUDO="sudo -E"
+	cd $BuildRoot/sw/nestlabs/apps/box
+    make BuildProduct=amber BuildConfig=development SUDO="sudo -E" flash-box-app
 	cd $BuildRoot
 }
 
-function a1-bt()
+function a1-install-app-release()
 {
-    /usr/local/nestlabs/toolchains/llvm/3.3/armv7m/bin/armv7m-none-eabi-addr2line -a -p -f -C -e results/amber/apple/llvm-armv7m/3.3/development/sw/nestlabs/apps/amber/amber-app.elf > backtrace.txt
-    cat backtrace.txt
+	if [ "$BuildRoot" == "" ];
+	then
+		echo "a1-install-app-releaee: no BuildRoot defined"
+		return -1
+	fi
+
+	cd $BuildRoot/sw/nestlabs/apps/box
+    make BuildProduct=amber BuildConfig=release SUDO="sudo -E" flash-box-app
+	cd $BuildRoot
 }
 
-function a1-bt-shell()
+function a1-install-diags()
 {
-    /usr/local/nestlabs/toolchains/llvm/3.3/armv7m/bin/armv7m-none-eabi-addr2line -a -p -f -C -e results/amber/apple/llvm-armv7m/3.3/development/sw/nestlabs/apps/shell/shell.elf  > backtrace.txt
-    cat backtrace.txt
-}
+	if [ "$BuildRoot" == "" ];
+	then
+		echo "a1-install-diags: no BuildRoot defined"
+		return -1
+	fi
 
+	cd $BuildRoot/sw/nestlabs/mfg-diags
+    make BuildProduct=amber BuildConfig=development SUDO="sudo -E" flash-mfg-diags
+	cd $BuildRoot
+}
 
 function d1-goto()
 {
@@ -789,9 +745,9 @@ function d1-install-app()
 		return -1
 	fi
 
-	cd $BuildRoot/sw/nestlabs/apps/topaz
-#	make BuildProduct=topaz BuildConfig=development
-	make BuildProduct=topaz BuildConfig=development Verbose= flash SUDO="sudo -E"
+	cd $BuildRoot/sw/nestlabs/apps/amber
+#	make BuildProduct=amber BuildConfig=development
+	make BuildProduct=amber BuildConfig=development Verbose= flash SUDO="sudo -E"
 	cd $BuildRoot
 }
 
@@ -883,6 +839,170 @@ function d1-etag()
     echo "*** Tagging complete - file is $BuildRoot/$TAGS_FILE"
 }
 
+function p1-goto()
+{
+#	export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
+	export GIT_EDITOR="emacs24"
+
+	cd ~/dev/pumice/production
+#    cd /mnt/hgfs/CookieBotOS/dolomite/production
+	. build/scripts/environment/setup.sh
+}
+
+function p1-etag()
+{
+   if [ "$BuildRoot" == "" ];
+   then
+	echo "p1-etag: no BuildRoot defined"
+	return -1
+   fi
+
+   echo "*** cd to BuildRoot $BuildRoot"
+
+   cd $BuildRoot
+
+   TAGS_FILE=TAGS
+
+   rm -f $TAGS_FILE
+   touch $TAGS_FILE
+
+   TAG_DIRS="\
+   sw/nestlabs \
+   sw/fps \
+   "
+
+   for i in $TAG_DIRS;
+   do
+	echo "*** Tagging directory $i"
+	find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
+   done
+
+   echo "*** Tagging complete - file is $BuildRoot/$TAGS_FILE"
+}
+
+function wp1-goto()
+{
+#	export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
+	export GIT_EDITOR="emacs24"
+    export BuildRoot="/home/rtinkoff/dev/nlweave-platform"
+
+    echo "BuildRoot is $BuildRoot"
+
+	cd $BuildRoot
+}
+
+function wp1-etag()
+{
+   if [ "$BuildRoot" == "" ];
+   then
+	echo "wp1-etag: no BuildRoot defined"
+	return -1
+   fi
+
+   echo "*** cd to BuildRoot $BuildRoot"
+
+   cd $BuildRoot
+
+   TAGS_FILE=TAGS
+
+   rm -f $TAGS_FILE
+   touch $TAGS_FILE
+
+   TAG_DIRS="\
+   . \
+   "
+
+   for i in $TAG_DIRS;
+   do
+	echo "*** Tagging directory $i"
+	find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
+   done
+
+   echo "*** Tagging complete - file is $BuildRoot/$TAGS_FILE"
+}
+
+function a1-goto()
+{
+#	export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
+	export GIT_EDITOR="emacs24"
+
+	cd ~/dev/rhodium/production
+	. build/scripts/environment/setup.sh
+}
+
+function a2-goto()
+{
+#	export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
+	export GIT_EDITOR="emacs24"
+
+	cd ~/dev/rhodium2/production
+	. build/scripts/environment/setup.sh
+}
+
+function a1-etag()
+{
+   if [ "$BuildRoot" == "" ];
+   then
+	echo "a1-etag: no BuildRoot defined"
+	return -1
+   fi
+
+   echo "*** cd to BuildRoot $BuildRoot"
+
+   cd $BuildRoot
+
+   TAGS_FILE=TAGS
+
+   rm -f $TAGS_FILE
+   touch $TAGS_FILE
+
+   TAG_DIRS="\
+   sw/nestlabs \
+   sw/fps \
+   "
+
+   for i in $TAG_DIRS;
+   do
+	echo "*** Tagging directory $i"
+	find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
+   done
+
+   echo "*** Tagging complete - file is $BuildRoot/$TAGS_FILE"
+}
+
 function s1-goto()
 {
 #	export GIT_EXTERNAL_DIFF="xxdiff"
@@ -914,14 +1034,7 @@ function s1-etag()
    touch $TAGS_FILE
 
    TAG_DIRS="\
-   sw/nestlabs/app \
-   sw/nestlabs/include \
-   sw/nestlabs/lib \
-   sw/nestlabs/osm \
-   sw/nestlabs/scpm \
-   sw/nestlabs/zigbee \
-   sw/nestlabs/weave \
-   sw/tps/opencflite/opencflite-476.17.2 \
+   sw/nestlabs \
    "
 
    for i in $TAG_DIRS;
@@ -931,14 +1044,14 @@ function s1-etag()
 	find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
 	find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
 	find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
-	find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
-	find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
-	find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
-	find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
-	find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
-	find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
-	find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
-	find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
    done
 
    echo "*** Tagging complete - file is $BuildRoot/$TAGS_FILE"
@@ -990,6 +1103,25 @@ function s1-build-nl-image-diamond()
     cd $BuildRoot
 }
 
+function s1-build-nl-image-flintstone()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "s1-build-nl-image: no BuildRoot defined"
+		return
+	fi
+
+    cd $BuildRoot/sw/nestlabs && make BuildConfig=development BuildProduct=flintstone &&
+    cd $BuildRoot/sw/init && make BuildConfig=development BuildProduct=flintstone &&
+    cd $BuildRoot/sw/setup && make BuildConfig=development BuildProduct=flintstone &&
+    cd $BuildRoot/sw/users && make BuildConfig=development BuildProduct=flintstone &&
+    cd $BuildRoot/fw && make BuildConfig=development BuildProduct=flintstone &&
+    cd $BuildRoot/package/fs && make BuildConfig=development BuildProduct=flintstone &&
+    cd $BuildRoot/package/manifests && make BuildConfig=development BuildProduct=flintstone &&
+    cd $BuildRoot/package/image && make BuildConfig=development BuildProduct=flintstone &&
+    cd $BuildRoot
+}
+
 function s1-rebuild()
 {
     s1-goto && rm -rf results/j49 && make clean-j49-development && make j49-development
@@ -999,18 +1131,18 @@ function s1-strip-client()
 {
     if [ "$BuildRoot" == "" ];
 	then
-		echo "s1-install-client: no BuildRoot defined"
+		echo "s1-strip-client: no BuildRoot defined"
 		return
 	fi
 
-    /usr/local/CodeSourcery/Sourcery_G++_Lite/2010q1-202/bin/arm-none-linux-gnueabi-strip $BuildRoot/results/j49/codesourcery/sourcery-gxx/2010q1-202/development/sw/nestlabs/app/client/nlclient
+    /usr/local/CodeSourcery/Sourcery_G++_Lite/2010q1-202/bin/arm-none-linux-gnueabi-strip $BuildRoot/results/flintstone/fsl/poky/1.6.2/development/sw/nestlabs/flintstone/nlclient
 }
 
 function s1-strip-client-diamond()
 {
     if [ "$BuildRoot" == "" ];
 	then
-		echo "s1-install-client: no BuildRoot defined"
+		echo "s1-strip-client-diamond: no BuildRoot defined"
 		return
 	fi
 
@@ -1099,6 +1231,116 @@ function s2-goto()
 #    cd sw/nestlabs/app
 }
 
+function s2-etag()
+{
+   if [ "$BuildRoot" == "" ];
+   then
+	echo "s2-etag: no BuildRoot defined"
+	return -1
+   fi
+
+   echo "*** cd to BuildRoot $BuildRoot"
+
+   cd $BuildRoot
+
+   TAGS_FILE=TAGS
+
+   rm -f $TAGS_FILE
+   touch $TAGS_FILE
+
+   TAG_DIRS="\
+   sw/nestlabs \
+   "
+
+   for i in $TAG_DIRS;
+   do
+	echo "*** Tagging directory $i"
+	find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
+   done
+
+   echo "*** Tagging complete - file is $BuildRoot/$TAGS_FILE"
+}
+
+function s2-master()
+{
+    s2-goto && git checkout master
+}
+
+function s2-build()
+{
+    s2-goto && make diamond3-development
+}
+
+function s2-build-nl-image()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "s2-build-nl-image: no BuildRoot defined"
+		return
+	fi
+
+    if [ "$1" == "" ];
+	then
+		echo "s2-build-nl-image: no BuildProduct specified"
+		return
+	fi
+
+    cd $BuildRoot/sw/nestlabs && make BuildConfig=development BuildProduct=$1 &&
+    cd $BuildRoot/sw/init && make BuildConfig=development BuildProduct=$1 &&
+    cd $BuildRoot/sw/setup && make BuildConfig=development BuildProduct=$1 &&
+    cd $BuildRoot/sw/users && make BuildConfig=development BuildProduct=$1 &&
+    cd $BuildRoot/fw && make BuildConfig=development BuildProduct=$1 &&
+    cd $BuildRoot/fs && make BuildConfig=development BuildProduct=$1 &&
+    cd $BuildRoot/image && make BuildConfig=development BuildProduct=$1 &&
+    cd $BuildRoot
+}
+
+function s2-rebuild()
+{
+    s2-goto && rm -rf results/diamond3 && make -j4 clean-diamond3-development && make diamond3-development
+}
+
+function s2-strip-client()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "s2-strip-client: no BuildRoot defined"
+		return
+	fi
+
+    /usr/local/CodeSourcery/Sourcery_G++_Lite/2010q1-202/bin/arm-none-linux-gnueabi-strip $BuildRoot/results/diamond3/fsl/poky/1.6.2/development/sw/nestlabs/app/client/nlclient
+}
+
+function s2-install-client()
+{
+    if [ "$BuildRoot" == "" ];
+	then
+		echo "s2-install-client: no BuildRoot defined"
+		return
+	fi
+
+    if [ "$1" == "" ];
+	then
+		echo "Usage: s2-install-client [Diamond IP addr]"
+		return
+	fi
+
+    cd $BuildRoot/sw/nestlabs/app/client/
+    make BuildConfig=development BuildProduct=diamond3 quick-install DeviceAddress=$1
+    cd $BuildRoot/
+}
+
 function d2h()
 {
     if [ "$1" == "" ];
@@ -1126,4 +1368,9 @@ function lr-goto()
     export GIT_EDITOR="emacs24"
     export BuildRoot="/home/rtinkoff/Linux-root"
     cd ~/Linux-root
+}
+
+function krm()
+{
+    kermit -b 115200 -l $1
 }
