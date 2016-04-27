@@ -28,7 +28,7 @@
 ;(setq yas-global-mode 1)
 
 (set-frame-font "Monaco")
-(set-face-attribute 'default nil :height 130)
+(set-face-attribute 'default nil :height 120)
 
 (require 'smooth-scrolling)
 
