@@ -131,8 +131,8 @@ PROMPT_COMMAND="find_git_branch; $PROMPT_COMMAND"
 #export PS1="$txtwht\u@\h:\w\[$txtcyn\] \$git_branch\[$txtred\]\$git_dirty\[$txtrst\]\n> "
 
 # Another variant:
-export PS1="\[$bldgrn\]\u@\h\[$bldylw\] \w\[$txtrst\] \$git_branch\[$txtblu\]\$git_dirty\[$txtrst\]\n> "
-#export PS1="\[$bldpur\]\u@\h\[$bldblu\] \w\[$txtrst\] \$git_branch\[$txtred\]\$git_dirty\[$txtrst\]\n> "
+#export PS1="\[$bldgrn\]\u@\h\[$bldylw\] \w\[$txtrst\] \$git_branch\[$txtblu\]\$git_dirty\[$txtrst\]\n> "
+export PS1="\[$bldpur\]\u@\h\[$bldblu\] \w\[$txtrst\] \$git_branch\[$txtred\]\$git_dirty\[$txtrst\]\n> "
 #export PS1="\[$bldgrn\]\u@\h\[$bldwht\] \w\[$txtrst\] \$git_branch\[$txtred\]\$git_dirty\[$txtrst\]\n> "
 #export PS1="\[$bldgrn\]\u@\h\[$bldwht\] \w\[$txtrst\]$bldcyn $git_branch\n$txtrst> "
 #export PS1="\[$bldpur\]\u@\h\[$bldblu\] \w\[$txtrst\]$bldpur $git_branch\n$txtrst> "

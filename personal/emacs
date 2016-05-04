@@ -24,13 +24,16 @@
 
 ;(global-highlight-indentation t)
 
+(global-hl-line-mode t)
+
 ;(require 'yasnippet)
 ;(setq yas-global-mode 1)
 
 (set-frame-font "Monaco")
-(set-face-attribute 'default nil :height 120)
+(set-face-attribute 'default nil :height 110)
 
-(require 'smooth-scrolling)
+(require 'smooth-scroll)
+(smooth-scroll-mode t)
 
 ;; Auto-complete
 
@@ -389,10 +392,11 @@ nlDeclareDebugLogger(XXXX_P0, XXXX_MAX_LOG_MSG_LEN);
 ;(load "deviant-theme")
 ;(load "ritchie-theme")
 ;(load "monokai-theme")
+(load "rog-monokai-theme")
 ;(load "professional-theme")
 ;(load "oldlace-theme")
 ;(load "flatui-theme")
-(load "leuven-theme")
+;(load "leuven-theme")
 
 (setq ediff-split-window-function 'split-window-horizontally)
 
