@@ -2,11 +2,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int sWindowWidth = 188;
-static int sWindowHeight = 53;
+static int sWindowWidth = 100;
+static int sWindowHeight = 50;
 
 #define HALF_WIN_WIDTH (sWindowWidth >> 1)
 #define HALF_WIN_HEIGHT (sWindowHeight >> 1)
+
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_BLUE    "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
 
 static void ClearFrameBuf(char *frameBuf)
 {
@@ -48,7 +56,7 @@ static void Render(char *frameBuf)
 
                 if (currentChar != 0)
                 {
-                    printf("%c", currentChar);
+                    printf(ANSI_COLOR_MAGENTA "%c" ANSI_COLOR_RESET, currentChar);
                 }
                 else
                 {
@@ -61,7 +69,7 @@ static void Render(char *frameBuf)
     }
 }
 
-static void DrawPixel(char *frameBuf, int x, int y)
+static void DrawPixel(char *frameBuf, int x, int y, char c)
 {
     if (frameBuf &&
         (x >= -HALF_WIN_WIDTH) &&
@@ -72,11 +80,11 @@ static void DrawPixel(char *frameBuf, int x, int y)
         int i = x + HALF_WIN_WIDTH;
         int j = -y + HALF_WIN_HEIGHT;
 
-        frameBuf[i +sWindowWidth*j] = 'x';
+        frameBuf[i +sWindowWidth*j] = c;
     }
 }
 
-static void DrawLine(char *frameBuf, int mnum, int mdenom, int b)
+static void DrawLine(char *frameBuf, int mnum, int mdenom, int b, char c)
 {
     if (frameBuf && (mdenom != 0))
     {
@@ -86,7 +94,7 @@ static void DrawLine(char *frameBuf, int mnum, int mdenom, int b)
         {
             int y = x*mnum/mdenom;
 
-            DrawPixel(frameBuf, x, y);
+            DrawPixel(frameBuf, x, y, c);
         }
     }
 }
@@ -107,7 +115,7 @@ static void DrawCircle(char *frameBuf, int centerx, int centery, unsigned int r,
                 if ((sumsquared == radsquared) ||
                     (filled && (sumsquared < radsquared)))
                 {
-                    DrawPixel(frameBuf, centerx + x, centery + y);
+                    DrawPixel(frameBuf, centerx + x, centery + y, 'x');
                 }
             }
         }
@@ -147,9 +155,17 @@ int main(int argc, char **argv)
 
     DrawAxes(frameBuf);
 
-//    DrawLine(frameBuf, 1, 4, 0);
+    DrawLine(frameBuf, 1, 4, 0, 'x');
 
-    DrawCircle(frameBuf, 0, 0, 8, 1);
+    DrawLine(frameBuf, 4, 1, 0, 'k');
+
+    DrawLine(frameBuf, 7, 4, 0, 'g');
+
+    DrawLine(frameBuf, -10, 5, 0, 'w');
+
+    DrawLine(frameBuf, -5, 10, 0, 'v');
+
+    //DrawCircle(frameBuf, 0, 0, 8, 1);
 
     Render(frameBuf);
     

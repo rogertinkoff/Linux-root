@@ -1,0 +1,597 @@
+#
+# Executes commands at the start of an interactive session.
+#
+# Authors:
+#   Sorin Ionescu <sorin.ionescu@gmail.com>
+#
+
+# Source Prezto.
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+fi
+
+# Set name of the theme to load.
+# Look in ~/.oh-my-zsh/themes/
+# Optionally, if you set this to "random", it'll load a random theme each
+# time that oh-my-zsh is loaded.
+#ZSH_THEME="robbyrussell"
+#ZSH_THEME="awesomepanda"
+#ZSH_THEME="dpoggi"
+#ZSH_THEME="rog-dpoggi"
+
+# Uncomment the following line to use case-sensitive completion.
+# CASE_SENSITIVE="true"
+
+# Uncomment the following line to use hyphen-insensitive completion. Case
+# sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
+
+# Uncomment the following line to disable bi-weekly auto-update checks.
+# DISABLE_AUTO_UPDATE="true"
+
+# Uncomment the following line to change how often to auto-update (in days).
+# export UPDATE_ZSH_DAYS=13
+
+# Uncomment the following line to disable colors in ls.
+# DISABLE_LS_COLORS="true"
+
+# Uncomment the following line to disable auto-setting terminal title.
+# DISABLE_AUTO_TITLE="true"
+
+# Uncomment the following line to enable command auto-correction.
+# ENABLE_CORRECTION="true"
+
+# Uncomment the following line to display red dots whilst waiting for completion.
+# COMPLETION_WAITING_DOTS="true"
+
+# Uncomment the following line if you want to disable marking untracked files
+# under VCS as dirty. This makes repository status check for large repositories
+# much, much faster.
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
+
+# Uncomment the following line if you want to change the command execution time
+# stamp shown in the history command output.
+# The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# HIST_STAMPS="mm/dd/yyyy"
+
+# Would you like to use another custom folder than $ZSH/custom?
+# ZSH_CUSTOM=/path/to/new-custom-folder
+
+# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
+# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+plugins=(git)
+
+# User configuration
+
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/rtinkoff/root/bin:/usr/local"
+# export MANPATH="/usr/local/man:$MANPATH"
+
+# You may need to manually set your language environment
+# export LANG=en_US.UTF-8
+
+# Preferred editor for local and remote sessions
+# if [[ -n $SSH_CONNECTION ]]; then
+#   export EDITOR='vim'
+# else
+#   export EDITOR='mvim'
+# fi
+
+# Compilation flags
+# export ARCHFLAGS="-arch x86_64"
+
+# ssh
+# export SSH_KEY_PATH="~/.ssh/dsa_id"
+
+# Fancy auto-complete
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
+#
+# Example aliases
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
+
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias rebash='source ~/.zshrc'
+alias h='history'
+alias hgrep='history 0 | grep'
+alias runftests='pushd; s2-goto && cd ./sw/nestlabs/flintstone && make -f Makefile.simutils BuildProduct=flintstonesim BuildConfig=development runtests 2> /dev/null; popd'
+alias runftests_withoutput='pushd; s2-goto && cd ./sw/nestlabs/flintstone && make -f Makefile.simutils BuildProduct=flintstonesim BuildConfig=development runtests; popd'
+alias dbgunit='LD_LIBRARY_PATH=${BuildRoot}/results/flintstonesim/gnu/gcc/4.x.x/development/usr/lib//'
+
+e()
+{
+	emacs-25.1 &
+}
+
+elight()
+{
+	emacs-25.1 --load "/home/rtinkoff/Linux-root/src/elisp/leuven-theme.el" &
+}
+
+edark()
+{
+	emacs-25.1 --load "/home/rtinkoff/Linux-root/src/elisp/rog-monokai-theme.el" &
+}
+
+w1-goto()
+{
+    #export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
+	export GIT_EDITOR="emacs-25.1"
+    cd /home/rtinkoff/dev/weave
+}
+
+w1-etag()
+{
+   w1-goto
+
+   TAGS_FILE=TAGS
+
+   rm -f $TAGS_FILE
+   touch $TAGS_FILE
+
+   TAG_DIRS="\
+   src \
+   "
+
+   for i in "src";
+   do
+	echo "*** Tagging directory $i"
+	find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
+   done
+
+   echo "*** Tagging complete - file is $TAGS_FILE"
+}
+
+w2-goto()
+{
+    #export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
+	export GIT_EDITOR="emacs-25.1"
+    cd /home/rtinkoff/dev/rtos-n1-master/fps/weave
+}
+
+w2-etag()
+{
+   w2-goto
+
+   TAGS_FILE=TAGS
+
+   rm -f $TAGS_FILE
+   touch $TAGS_FILE
+
+   TAG_DIRS="\
+   src \
+   "
+
+   for i in "src";
+   do
+	echo "*** Tagging directory $i"
+	find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
+   done
+
+   echo "*** Tagging complete - file is $TAGS_FILE"
+}
+
+find_git_branch() {
+   local branch
+   # Based on: http://stackoverflow.com/a/13003854/170413
+   if branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+   then
+      if [[ "$branch" == "HEAD" ]]; then
+         branch='(detached head)'
+      fi
+      GIT_BRANCH=$branch
+      git_branch="($branch)"
+   else
+       GIT_BRANCH=""
+      git_branch=""
+   fi
+}
+
+gpush()
+{
+#    if [ "$GIT_BRANCH" == "" ];
+#	then
+#		echo "gpush: no GIT_BRANCH defined"
+#		return -1
+#	fi
+
+    git push $@ origin $GIT_BRANCH
+}
+
+gpull()
+{
+#    if [ "$GIT_BRANCH" == "" ];
+#	then
+#		echo "d1-pull: no GIT_BRANCH defined"
+#		return -1
+#	fi
+
+    git pull $@ origin $GIT_BRANCH
+}
+
+gshow()
+{
+#    if [ "$BuildRoot" == "" ];
+#    then
+#	    echo "d1-show: no BuildRoot defined"
+#	    return -1
+#    fi
+#
+#    if [ "$1" == "" ];
+#    then
+#	    echo "d1-show: usage 'd1-show <change>'"
+#	    return -1
+#    fi
+
+    git difftool -y $1^! $1
+}
+
+glist()
+{
+    git diff-tree --no-commit-id --name-only -r $1
+}
+
+krm()
+{
+    kermit -b 115200 -l $1
+}
+
+s1-goto()
+{
+    export GIT_EDITOR="emacs-25.1"
+    
+    cd ~/dev/sapphire/production
+    . build/scripts/environment/setup.sh
+}
+
+s1-clobber()
+{
+    s1-goto
+    git clean -dfx
+    find . -name '.build' | xargs rm -rf
+    find . -name '.depend' | xargs rm -rf
+}
+
+s1-strip-client()
+{
+    /opt/poky/1.6.2a/sysroots/i686-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-strip $BuildRoot/results/flintstone/fsl/poky/1.6.2a/development/sw/nestlabs/flintstone/nlclient
+}
+
+s1-etag()
+{
+#   if [ "$BuildRoot" == "" ];
+#   then
+#	echo "s1-etag: no BuildRoot defined"
+#	return -1
+#   fi
+
+   s1-goto
+
+   TAGS_FILE=TAGS
+
+   rm -f $TAGS_FILE
+   touch $TAGS_FILE
+
+   for i in "sw/nestlabs" "sw/nestlabs/flintstone/assets/audio" "sw/nestlabs/flintstone/assets/animations";
+   do
+	echo "*** Tagging directory $i"
+	find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
+    find $i -name "*.asm" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
+   done
+
+   echo "*** Tagging complete - file is $TAGS_FILE"
+}
+
+s2-goto()
+{
+    export GIT_EDITOR="emacs-25.1"
+    
+    cd ~/dev/sapphire2/production
+    . build/scripts/environment/setup.sh
+}
+
+s2-clobber()
+{
+    s2-goto
+    git clean -dfx
+    find . -name '.build' | xargs rm -rf
+    find . -name '.depend' | xargs rm -rf
+}
+
+s2-strip-client()
+{
+    /opt/poky/1.6.2a/sysroots/i686-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-strip $BuildRoot/results/flintstone/fsl/poky/1.6.2a/development/sw/nestlabs/flintstone/nlclient
+}
+
+s2-etag()
+{
+#   if [ "$BuildRoot" == "" ];
+#   then
+#	echo "s2-etag: no BuildRoot defined"
+#	return -1
+#   fi
+
+   s2-goto
+
+   TAGS_FILE=TAGS
+
+   rm -f $TAGS_FILE
+   touch $TAGS_FILE
+
+   for i in "sw/nestlabs" "sw/nestlabs/flintstone/assets/audio" "sw/nestlabs/flintstone/assets/animations";
+   do
+	echo "*** Tagging directory $i"
+	find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
+    find $i -name "*.asm" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
+   done
+
+   echo "*** Tagging complete - file is $TAGS_FILE"
+}
+
+p1-goto()
+{
+    export GIT_EDITOR="emacs-25.1"
+    
+    cd ~/dev/rtos-master
+    source build/scripts/environment/setup.sh
+}
+
+p1-clobber()
+{
+    p1-goto
+    rm -rf results
+    find . -name '.build' | xargs rm -rf
+    find . -name '.depend' | xargs rm -rf
+    make clean-pinna-development
+}
+
+p1-etag()
+{
+#   if [ "$BuildRoot" == "" ];
+#   then
+#	echo "s2-etag: no BuildRoot defined"
+#	return -1
+#   fi
+
+   p1-goto
+
+   TAGS_FILE=TAGS
+
+   rm -f $TAGS_FILE
+   touch $TAGS_FILE
+
+   for i in "fps" "tps" "product/nestlabs/pinna";
+   do
+	echo "*** Tagging directory $i"
+	find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
+    find $i -name "*.asm" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
+   done
+
+   echo "*** Tagging complete - file is $TAGS_FILE"
+}
+
+p1-clobber()
+{
+    p1-goto
+    rm -rf results
+    find . -name '.build' | xargs rm -rf
+    find . -name '.depend' | xargs rm -rf
+    make clean-pinna-development
+}
+
+p1-update()
+{
+    p1-goto
+    sx -vv ./results/pinna/gnu/gcc/4.9.3/development/fps/imagetool/pinna-app_stream_image/*.elf < /dev/ttyUSB2 > /dev/ttyUSB2
+}
+
+p1-detok()
+{
+    p1-goto
+    ./build/tools/host/x86_64-unknown-linux-gnu/bin/detok -s fps/pinna-tokens/stable-tokens.db -e ./results/pinna/gnu/gcc/4.9.3/development/product/nestlabs/pinna/apps/pinna/standalone-app/pinna-app.elf /dev/ttyUSB2
+}
+
+p1-bt()
+{
+    p1-goto
+    /usr/local/freertos/nestlabs-20131024-9c2cfe5/toolchains/gcc-arm-none-eabi-4_9-2015q2/bin/arm-none-eabi-addr2line -a -p -f -C -e ./results/pinna/gnu/gcc/4.9.3/development/product/nestlabs/pinna/apps/pinna/standalone-app/pinna-app.elf > Backtrace.txt
+}
+
+p2-goto()
+{
+    export GIT_EDITOR="emacs-25.1"
+    
+    cd ~/dev/rtos-n1-master
+    source build/scripts/environment/setup.sh
+}
+
+p2-etag()
+{
+#   if [ "$BuildRoot" == "" ];
+#   then
+#	echo "s2-etag: no BuildRoot defined"
+#	return -1
+#   fi
+
+   p2-goto && cd product/nestlabs/pinna
+
+   TAGS_FILE=TAGS
+
+   rm -f $TAGS_FILE
+   touch $TAGS_FILE
+
+   for i in "./";
+   do
+	echo "*** Tagging directory $i"
+	find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
+    find $i -name "*.asm" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
+   done
+
+   echo "*** Tagging complete - file is $TAGS_FILE"
+}
+
+p2-clobber()
+{
+    p2-goto
+    rm -rf results
+    find . -name '.build' | xargs rm -rf
+    find . -name '.depend' | xargs rm -rf
+    make clean-pinna-development
+}
+
+p2-update()
+{
+    p2-goto
+    sx -vv ./results/pinna/gnu/gcc/4.9.3/development/fps/imagetool/pinna-app_stream_image/*.elf < /dev/ttyUSB2 > /dev/ttyUSB2
+}
+
+p2-install-helloweave()
+{
+    p2-goto
+    sx -vv ./results/pinna/gnu/gcc/4.9.3/diagnostics/fps/imagetool/helloweave-app_stream_image/*.elf < /dev/ttyUSB2 > /dev/ttyUSB2
+}
+
+p2-install-shell()
+{
+    p2-goto
+    sx -vv ./results/pinna/gnu/gcc/4.9.3/diagnostics/fps/imagetool/shell_stream_image/*.elf < /dev/ttyUSB2 > /dev/ttyUSB2
+}
+
+p2-detok()
+{
+    p2-goto
+    ./build/tools/host/x86_64-unknown-linux-gnu/bin/detok -s fps/pinna-tokens/stable-tokens.db -e ./results/pinna/gnu/gcc/4.9.3/development/product/nestlabs/pinna/apps/pinna/standalone-app/pinna-app.elf /dev/ttyUSB2
+}
+
+p2-detok-shell()
+{
+    p2-goto
+    ./build/tools/host/x86_64-unknown-linux-gnu/bin/detok -s fps/pinna-tokens/stable-tokens.db -e ./results/pinna/gnu/gcc/4.9.3/diagnostics/product/nestlabs/pinna/apps/shell/shell.elf /dev/ttyUSB2
+}
+
+p2-bt()
+{
+    p2-goto
+    rm -f backtrace.txt
+    /usr/local/freertos/nestlabs-20131024-9c2cfe5/toolchains/gcc-arm-none-eabi-4_9-2015q2/bin/arm-none-eabi-addr2line -a -p -f -C -e ./results/pinna/gnu/gcc/4.9.3/development/product/nestlabs/pinna/apps/pinna/standalone-app/pinna-app.elf > backtrace.txt
+}
+
+p2-bt-helloweave()
+{
+    p2-goto
+    rm -f backtrace.txt
+    /usr/local/freertos/nestlabs-20131024-9c2cfe5/toolchains/gcc-arm-none-eabi-4_9-2015q2/bin/arm-none-eabi-addr2line -a -p -f -C -e ./results/pinna/gnu/gcc/4.9.3/diagnostics/fps/sample_apps/helloweave-app/helloweave-app.elf > backtrace.txt
+}
+
+p2-bt-sim()
+{
+    p2-goto
+    rm -f backtrace.txt
+    addr2line -a -p -f -C -e ./results/pinnasim/gnu/gcc/4.x.x/development/product/nestlabs/pinna/apps/pinna/standalone-app/pinna-app
+}
+
+p2-detok-helloweave()
+{
+    p2-goto
+    ./build/tools/host/x86_64-unknown-linux-gnu/bin/detok -s fps/pinna-tokens/stable-tokens.db -e ./results/pinna/gnu/gcc/4.9.3/diagnostics/fps/sample_apps/helloweave-app/helloweave-app.elf /dev/ttyUSB2
+}
+
+get-git-branch()
+{
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+       git symbolic-ref HEAD | cut -d'/' -f3-
+    fi
+}
+
+#find_git_branch
+#s1-goto
+
+autoload -Uz promptinit
+promptinit
+#prompt rogfade blue
+#prompt rogsorin
+#prompt fire red magenta blue white white white
+#prompt sorin
+#prompt powerline
+#prompt rognicoulaj
+#prompt steeef
+#prompt rogsteef
+#prompt clint
+#prompt bigfade
+prompt rogbigfade
+
+export JAVA_HOME=/usr/local/jdk1.8.0_77
