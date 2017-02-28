@@ -85,6 +85,8 @@ export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/
 # export SSH_KEY_PATH="~/.ssh/dsa_id"
 
 # Fancy auto-complete
+autoload predict-on
+predict-on
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
@@ -100,7 +102,7 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
 alias rebash='source ~/.zshrc'
-alias h='history'
+alias h='history 0'
 alias hgrep='history 0 | grep'
 alias runftests='pushd; s2-goto && cd ./sw/nestlabs/flintstone && make -f Makefile.simutils BuildProduct=flintstonesim BuildConfig=development runtests 2> /dev/null; popd'
 alias runftests_withoutput='pushd; s2-goto && cd ./sw/nestlabs/flintstone && make -f Makefile.simutils BuildProduct=flintstonesim BuildConfig=development runtests; popd'
@@ -108,23 +110,23 @@ alias dbgunit='LD_LIBRARY_PATH=${BuildRoot}/results/flintstonesim/gnu/gcc/4.x.x/
 
 e()
 {
-	emacs-25.1 &
+	emacs -mm &
 }
 
 elight()
 {
-	emacs-25.1 --load "/home/rtinkoff/Linux-root/src/elisp/leuven-theme.el" &
+	emacs -mm --load "/home/rtinkoff/Linux-root/src/elisp/leuven-theme.el" &
 }
 
 edark()
 {
-	emacs-25.1 --load "/home/rtinkoff/Linux-root/src/elisp/rog-monokai-theme.el" &
+	emacs -mm --load "/home/rtinkoff/Linux-root/src/elisp/rog-monokai-theme.el" &
 }
 
 w1-goto()
 {
     #export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
-	export GIT_EDITOR="emacs-25.1"
+	export GIT_EDITOR="emacs"
     cd /home/rtinkoff/dev/weave
 }
 
@@ -164,7 +166,7 @@ w1-etag()
 w2-goto()
 {
     #export GIT_EXTERNAL_DIFF="~/root/bin/b-gitdiff"
-	export GIT_EDITOR="emacs-25.1"
+	export GIT_EDITOR="emacs"
     cd /home/rtinkoff/dev/rtos-n1-master/fps/weave
 }
 
@@ -266,25 +268,85 @@ krm()
     kermit -b 115200 -l $1
 }
 
+s2-goto()
+{
+    export GIT_EDITOR="emacs"
+    
+    cd ~/dev/sapphire-repo-2
+    . build/scripts/environment/setup.sh
+}
+
+s2-clobber()
+{
+    s2-goto
+    repo forall -c "git clean -dfx"
+    find . -name '.build' | xargs rm -rf
+    find . -name '.depend' | xargs rm -rf
+    rm -rf results
+}
+
+s2-strip-client()
+{
+    /opt/poky/1.6.2a/sysroots/i686-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-strip /home/rtinkoff/dev/sapphire-repo-2/results/flintstone/fsl/poky/1.6.2a/development/external/production/sw/nestlabs/flintstone/nlclient
+}
+
+s2-etag()
+{
+#   if [ "$BuildRoot" == "" ];
+#   then
+#	echo "s2-etag: no BuildRoot defined"
+#	return -1
+#   fi
+
+   s2-goto
+   cd sapphire/production
+
+   TAGS_FILE=TAGS
+
+   rm -f $TAGS_FILE
+   touch $TAGS_FILE
+
+   for i in "sw/nestlabs" "sw/nestlabs/flintstone/assets/audio" "sw/nestlabs/flintstone/assets/animations";
+   do
+	echo "*** Tagging directory $i"
+	find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
+	find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
+    find $i -name "*.asm" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
+   done
+
+   echo "*** Tagging complete - file is $TAGS_FILE"
+}
+
 s1-goto()
 {
-    export GIT_EDITOR="emacs-25.1"
+    export GIT_EDITOR="emacs"
     
-    cd ~/dev/sapphire/production
+    cd ~/dev/sapphire-repo
     . build/scripts/environment/setup.sh
 }
 
 s1-clobber()
 {
     s1-goto
-    git clean -dfx
+    repo forall -c "git clean -dfx"
     find . -name '.build' | xargs rm -rf
     find . -name '.depend' | xargs rm -rf
+    rm -rf results
 }
 
 s1-strip-client()
 {
-    /opt/poky/1.6.2a/sysroots/i686-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-strip $BuildRoot/results/flintstone/fsl/poky/1.6.2a/development/sw/nestlabs/flintstone/nlclient
+    /opt/poky/1.6.2a/sysroots/i686-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-strip /home/rtinkoff/dev/sapphire-repo/results/flintstone/fsl/poky/1.6.2a/development/external/production/sw/nestlabs/flintstone/nlclient
 }
 
 s1-etag()
@@ -302,7 +364,7 @@ s1-etag()
    rm -f $TAGS_FILE
    touch $TAGS_FILE
 
-   for i in "sw/nestlabs" "sw/nestlabs/flintstone/assets/audio" "sw/nestlabs/flintstone/assets/animations";
+   for i in "external/production/sw/nestlabs" "sapphire/production/sw/nestlabs/";
    do
 	echo "*** Tagging directory $i"
 	find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
@@ -323,66 +385,30 @@ s1-etag()
    echo "*** Tagging complete - file is $TAGS_FILE"
 }
 
-s2-goto()
+s1-reset-sim()
 {
-    export GIT_EDITOR="emacs-25.1"
-    
-    cd ~/dev/sapphire2/production
-    . build/scripts/environment/setup.sh
-}
-
-s2-clobber()
-{
-    s2-goto
-    git clean -dfx
-    find . -name '.build' | xargs rm -rf
-    find . -name '.depend' | xargs rm -rf
-}
-
-s2-strip-client()
-{
-    /opt/poky/1.6.2a/sysroots/i686-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-strip $BuildRoot/results/flintstone/fsl/poky/1.6.2a/development/sw/nestlabs/flintstone/nlclient
-}
-
-s2-etag()
-{
-#   if [ "$BuildRoot" == "" ];
-#   then
-#	echo "s2-etag: no BuildRoot defined"
-#	return -1
-#   fi
-
-   s2-goto
-
-   TAGS_FILE=TAGS
-
-   rm -f $TAGS_FILE
-   touch $TAGS_FILE
-
-   for i in "sw/nestlabs" "sw/nestlabs/flintstone/assets/audio" "sw/nestlabs/flintstone/assets/animations";
-   do
-	echo "*** Tagging directory $i"
-	find $i -name "*.c" | xargs etags --output=$TAGS_FILE --append
-	find $i -name "*.cpp" | xargs etags --output=$TAGS_FILE --append
-	find $i -name "*.h" | xargs etags --output=$TAGS_FILE --append
-	find $i -name "*.hpp" | xargs etags --output=$TAGS_FILE --append
-    find $i -name "*.asm" | xargs etags --output=$TAGS_FILE --append
-#	find $i -name "*.xml" | xargs etags --output=$TAGS_FILE --append
-#	find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
-#	find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
-#	find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
-#	find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
-#	find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
-#	find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
-#	find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
-   done
-
-   echo "*** Tagging complete - file is $TAGS_FILE"
+    echo "*** Blowing away old sandbox"
+    sudo rm -rf ~/nestlabs.fs/
+    echo "*** Running 'ip netns | xargs -I {} sudo ip netns delete {}'"
+    ip netns | xargs -I {} sudo ip netns delete {}
+    echo "*** Running 'rm -rf ~/.*state.json.lock'"
+    rm -rf ~/.*state.json.lock
+    echo "*** Running 'rm -rf ~/.*state.json'"
+    rm -rf ~/.*state.json
+    echo "*** Doing teardown-happy-state"
+    ${BuildRoot}/results/flintstonesim/gnu/gcc/4.x.x/development/usr/flintstone-simtool teardown-happy-state
+    echo "*** Creating new sandbox"
+    ${BuildRoot}/results/flintstonesim/gnu/gcc/4.x.x/development/usr/flintstone-simtool create-sandbox
+    echo "*** Doing setup-happy-state"
+    ${BuildRoot}/results/flintstonesim/gnu/gcc/4.x.x/development/usr/flintstone-simtool setup-happy-state
+    echo "*** Done.  Test with 'happy-shell onhub ping google.com'"
+    echo "*** Don't forget this:"
+    weave-register-serivce -t testb -u rtinkoff+75@nestlabs.com -p troN1023NIE!
 }
 
 p1-goto()
 {
-    export GIT_EDITOR="emacs-25.1"
+    export GIT_EDITOR="emacs"
     
     cd ~/dev/rtos-master
     source build/scripts/environment/setup.sh
@@ -424,7 +450,7 @@ p1-etag()
 #	find $i -name "*.mm" | xargs etags --output=$TAGS_FILE --append
 #	find $i -name "*.m" | xargs etags --output=$TAGS_FILE --append
 #	find $i -name "*.mak" | xargs etags --output=$TAGS_FILE --append
-#	find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append
+#	find $i -name "*.bld" | xargs etags --output=$TAGS_FILE --append.
 #	find $i -name "*.el" | xargs etags --output=$TAGS_FILE --append
 #	find $i -name "*.xsd" | xargs etags --output=$TAGS_FILE --append
 #	find $i -name "*.strings" | xargs etags --output=$TAGS_FILE --append
@@ -462,7 +488,7 @@ p1-bt()
 
 p2-goto()
 {
-    export GIT_EDITOR="emacs-25.1"
+    export GIT_EDITOR="emacs"
     
     cd ~/dev/rtos-n1-master
     source build/scripts/environment/setup.sh
@@ -585,13 +611,13 @@ promptinit
 #prompt rogfade blue
 #prompt rogsorin
 #prompt fire red magenta blue white white white
-#prompt sorin
+prompt sorin
 #prompt powerline
 #prompt rognicoulaj
 #prompt steeef
 #prompt rogsteef
 #prompt clint
 #prompt bigfade
-prompt rogbigfade
+#prompt rogbigfade
 
 export JAVA_HOME=/usr/local/jdk1.8.0_77
