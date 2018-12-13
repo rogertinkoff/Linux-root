@@ -1005,15 +1005,11 @@ function a1-etag()
 
 function s1-goto()
 {
-#	export GIT_EXTERNAL_DIFF="xxdiff"
-    export GIT_EDITOR="emacs24"
+    export GIT_EDITOR="emacs"
 
-#   cd /mnt/hgfs/CookieBotOS/sapphire/production
-      cd ~/dev/sapphire/production
-   . build/scripts/environment/setup.sh
-#    export BuildProduct=j49
-#    export BuildConfig=development
-#    cd sw/nestlabs/app
+    unset MAKEFLAGS
+    cd ~/dev/sapphire/production
+    . build/scripts/environment/setup.sh
 }
 
 function s1-etag()
